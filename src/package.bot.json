@@ -13,7 +13,7 @@
 		"type": "git"
 	},
 	"_moduleAliases": {
-    "@bot": "./dis/apps/bot",
+    "@bot": "./dist/apps/bot",
 		"@interfaces": "./dist/interfaces",
 		"@helpers": "./dist/helpers"
   },

@@ -25,7 +25,7 @@ services:
     env_file: ./.env
     working_dir: /home/node
     command: >
-      /bin/bash -c "npm install --global pnpm && pnpm install && pnpm build"
+      /bin/bash -c "npm install --global pnpm && pnpm install && pnpm build && pnpm start"
     volumes:
       - ./src/apps/bot:/home/node/apps/bot
       - ./src/interfaces:/home/node/interfaces
