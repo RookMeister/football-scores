@@ -1,0 +1,62 @@
+
+version: '3.3'
+services:
+  api:
+    image: node:16
+    container_name: api
+    # restart: unless-stopped
+    env_file: ./.env
+    working_dir: /home/node
+    command: >
+      /bin/bash -c "npm install --global pnpm && pnpm install && pnpm build && pnpm start"
+    volumes:
+      - ./src/apps/api:/home/node/apps/api
+      - ./src/interfaces:/home/node/interfaces
+      - ./src/helpers:/home/node/helpers
+      - ./src/package.api.json:/home/node/package.json
+      - ./src/nodemon.api.json:/home/node/nodemon.json
+      - ./src/tsconfig.api.json:/home/node/tsconfig.json
+    networks:
+      - app-network
+  bot:
+    image: node:16
+    container_name: bot
+    # restart: unless-stopped
+    env_file: ./.env
+    working_dir: /home/node
+    command: >
+      /bin/bash -c "npm install --global pnpm && pnpm install && pnpm build"
+    volumes:
+      - ./src/apps/bot:/home/node/apps/bot
+      - ./src/interfaces:/home/node/interfaces
+      - ./src/helpers:/home/node/helpers
+      - ./src/package.bot.json:/home/node/package.json
+      - ./src/nodemon.bot.json:/home/node/nodemon.json
+      - ./src/tsconfig.bot.json:/home/node/tsconfig.json
+    depends_on:
+      - api
+    networks:
+      - app-network
+  web:
+    image: node:16
+    container_name: web
+    # restart: unless-stopped
+    ports:
+      - 80:3000
+    env_file: ./.env
+    working_dir: /home/node
+    command: >
+      /bin/bash -c "npm install --global pnpm && cd ./apps/web && pnpm install && pnpm build && pnpm preview"
+    tty: true
+    volumes:
+      - ./src/apps/web:/home/node/apps/web
+      - ./src/interfaces:/home/node/interfaces
+      - ./src/helpers:/home/node/helpers
+    depends_on:
+      - api
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
