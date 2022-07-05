@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
+import { format } from 'date-fns';
 import { useFetch } from '@vueuse/core';
 import { ICompetitionResponce } from '@interfaces/competitions.interface';
 import { ICompetitionStandingLeagueResponce,  ICompetitionStandingCupResponce } from '@interfaces/standings.interface';
@@ -36,13 +37,12 @@ const getStanding = () => {
   } else if (standing.value && !tableType(standing.value)) {
     activeRound.value = standing.value.cupRounds[0].roundTitle;
     playoff.value = standing.value;
-    const lenCupRounds = standing.value.cupRounds.length - 1;
-    standing.value.cupRounds.forEach((r, i) => {
+    standing.value.cupRounds.forEach((r) => {
       const { roundTitle } = r;
       r.eventGroups.forEach(e => {
         winsTeam.value[e.wins[0].participantId] = roundTitle;
         winsTeam.value[e.wins[1].participantId] = roundTitle;
-        if (i === lenCupRounds) {
+        if (r.roundTitle === 'Финал') {
           const winTeam = e.wins.find(t => t.wins);
           winTeam && (winsTeam.value[winTeam.participantId] = 'Победитель');
         }
@@ -67,6 +67,9 @@ const getSlugImg = (key: number, data: TLEAGUEORCUP) => (data.participants[key].
 </script>
 
 <template>
+  <div @click="$router.back()" class="mt-4 px-6">
+      <svg style="fill: currentColor;" class="w-8 h-8" viewBox="0 0 320 512"><path d="M224 480c-8.188 0-16.38-3.125-22.62-9.375l-192-192c-12.5-12.5-12.5-32.75 0-45.25l192-192c12.5-12.5 32.75-12.5 45.25 0s12.5 32.75 0 45.25L77.25 256l169.4 169.4c12.5 12.5 12.5 32.75 0 45.25C240.4 476.9 232.2 480 224 480z"/></svg>
+    </div>
   <div v-if="tournament" class="flex flex-col items-center">
     <img class="h-24 w-24" :src="IMG_URL + tournament.header.image" alt="" srcset="">
     <h1><b>{{ (tournament.header).title }}</b></h1>
@@ -129,10 +132,10 @@ const getSlugImg = (key: number, data: TLEAGUEORCUP) => (data.participants[key].
                 <th class="py-2 border-b border-b-gray-300 text-center w-18" scope="col"></th>
               </tr>
             </thead>
-            <tr v-for="math in round.eventGroups" class="border-b border-b-gray-300">
-              <td class="w-full flex items-center py-2 pl-6">
+            <tr v-for="math in round.eventGroups" class="flex border-b border-b-gray-300 w-screen">
+              <td class="block mr-auto items-center py-2 pl-6">
                 <template v-for="(event, i) in math.events">
-                  <div v-if="i === 0" class="mr-auto">
+                  <template v-if="i === 0">
                     <div
                       v-for="competitor in sortCompetitors(event.competitors)"
                       class="flex items-center"
@@ -147,23 +150,31 @@ const getSlugImg = (key: number, data: TLEAGUEORCUP) => (data.participants[key].
                       <svg v-else width="24" height="24" style="color: #ddd;" viewBox="0 0 100 100"><path d="M50.045 0L12 6.997v54.591c0 4.202 1.882 8.74 5.604 13.493 3.3 4.205 7.971 8.511 13.883 12.8 7.381 5.336 14.905 9.31 18.558 11.119 3.659-1.81 11.183-5.782 18.562-11.119 5.916-4.288 10.58-8.594 13.877-12.8 3.725-4.759 5.613-9.29 5.613-13.493V6.998L50.045 0z" fill="currentColor" fill-rule="nonzero"></path></svg>
                       <div class="truncate" :class="(winsTeam[competitor.participantId] !== round.roundTitle) && 'font-bold'">{{ playoff.participants[competitor.participantId].titleRu }}</div>
                     </div>
-                  </div>
+                  </template>
                 </template>
               </td>
-              <td v-for="(event, i) in math.events" class="text-center py-2 relative pr-6" :class="[(i === 0) && 'align-top', (i === 1) && 'align-bottom']">
+              <td v-for="(event, i) in math.events" class="block text-center py-2 relative pr-6" :class="[(i === 0) && 'align-top', (i === 1) && 'align-bottom']">
                 <div
                   v-if="i === 0" v-for="competitor in sortCompetitors(event.competitors)"
                   :class="(competitor.place === 1) && 'font-bold'"
                 >
                   <template v-if="competitor.results[0].periodName === 'normaltime_and_overtime'">{{ competitor.results[0].value }}</template>
                 </div>
-                <div v-if="i === 1" class="flex justify-center relative">
-                  <div>
+                <div v-if="(i === 1) && !event.eventStatus.notStarted">
+                  <!-- <div v-if=""> -->
                     <div v-for="competitor in sortCompetitors(event.competitors, true)" :class="(competitor.place === 1) && 'font-bold'">
                       <template v-if="competitor.results[0].periodName === 'normaltime_and_overtime'">{{ competitor.results[0].value }}</template>
                     </div>
-                  </div>
+                  <!-- </div>
+                  <div class="flex flex-col items-center text-xs text-neutral-400" v-else>
+                    <div>{{ format(new Date(event.startTime), "dd.MM HH:mm") }}</div>
+                    <div>{{ event.eventStatus.titleRu }}</div>
+                  </div> -->
                 </div>
+                <div v-else-if="i === 1" class="flex flex-col h-full justify-center items-center text-xs text-neutral-400">
+                    <div>{{ format(new Date(event.startTime), "dd.MM HH:mm") }}</div>
+                    <div>{{ event.eventStatus.titleRu }}</div>
+                  </div>
                 <div class="absolute flex flex-col justify-center inset-y-0 right-0 mr-4">
                   <div
                     v-for="competitor in sortCompetitors(event.competitors, !!i)"
