@@ -1,4 +1,6 @@
 tsconfig.json
+package.json
+pnppm-lock.yaml
 docker-compose.yml
 
 # Editor directories and files
