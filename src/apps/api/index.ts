@@ -17,7 +17,7 @@ routes.forEach(route => {
 
 const start = async (): Promise<void> => {
 	try {
-		await app.listen(config.SERVER_PORT, '0.0.0.0');
+		await app.listen({ port: config.SERVER_PORT, host: '0.0.0.0' });
 		app.swagger();
 	} catch (err) {
 		app.log.error(err);

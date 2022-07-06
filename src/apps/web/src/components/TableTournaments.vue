@@ -62,8 +62,12 @@ const sortCompetitors = (arr: any[], condition = false) => {
   })
 }
 
+const getLiveMin = (time: string) => {
+  const [min] = time.split(':');
+  return min + "'";
+}
+
 const getSlugImg = (key: number, data: TLEAGUEORCUP) => (data.participants[key].frontConfig.logos.default || '').replace('500_500.png', '30_30.png');
-// const getSlugForImg = (key: number) => playoff.value && (playoff.value.participants[key].frontConfig.logos.default || '').replace('500_500.png', '30_30.png');
 </script>
 
 <template>
@@ -153,23 +157,25 @@ const getSlugImg = (key: number, data: TLEAGUEORCUP) => (data.participants[key].
                   </template>
                 </template>
               </td>
-              <td v-for="(event, i) in math.events" class="block text-center py-2 relative pr-6" :class="[(i === 0) && 'align-top', (i === 1) && 'align-bottom']">
-                <div
-                  v-if="i === 0" v-for="competitor in sortCompetitors(event.competitors)"
-                  :class="(competitor.place === 1) && 'font-bold'"
-                >
-                  <template v-if="competitor.results[0].periodName === 'normaltime_and_overtime'">{{ competitor.results[0].value }}</template>
+              <td v-for="(event, i) in math.events" class="text-center py-2 relative pr-6 flex" :class="[(i === 0) && 'align-top', (i === 1) && 'align-bottom']">
+                <div v-if="(i === 0) && event.eventStatus.live && event.eventClock" class="text-xs mr-2 text-amber-400 flex items-center">
+                  {{ getLiveMin(event.eventClock) }}
+                </div>
+                <div v-if="i === 0">
+                  <div v-for="competitor in sortCompetitors(event.competitors)" :class="(competitor.place === 1) && 'font-bold'">
+                    <template v-if="competitor.results[0].periodName === 'normaltime_and_overtime'">{{ competitor.results[0].value }}</template>
+                  </div>
+                </div>
+                <div v-if="(i === 1) && event.eventStatus.live && event.eventClock" class="text-xs mr-2 text-amber-400 flex items-center">
+                  {{ getLiveMin(event.eventClock) }}
                 </div>
                 <div v-if="(i === 1) && !event.eventStatus.notStarted">
-                  <!-- <div v-if=""> -->
-                    <div v-for="competitor in sortCompetitors(event.competitors, true)" :class="(competitor.place === 1) && 'font-bold'">
+                    <div
+                      v-for="competitor in sortCompetitors(event.competitors, true)"
+                      :class="[(competitor.place === 1) && !event.eventStatus.live && 'font-bold', event.eventStatus.live && 'text-amber-400']"
+                    >
                       <template v-if="competitor.results[0].periodName === 'normaltime_and_overtime'">{{ competitor.results[0].value }}</template>
                     </div>
-                  <!-- </div>
-                  <div class="flex flex-col items-center text-xs text-neutral-400" v-else>
-                    <div>{{ format(new Date(event.startTime), "dd.MM HH:mm") }}</div>
-                    <div>{{ event.eventStatus.titleRu }}</div>
-                  </div> -->
                 </div>
                 <div v-else-if="i === 1" class="flex flex-col h-full justify-center items-center text-xs text-neutral-400">
                     <div>{{ format(new Date(event.startTime), "dd.MM HH:mm") }}</div>
@@ -179,7 +185,7 @@ const getSlugImg = (key: number, data: TLEAGUEORCUP) => (data.participants[key].
                   <div
                     v-for="competitor in sortCompetitors(event.competitors, !!i)"
                     class="text-gray-400 text-xs"
-                    :class="(competitor.place === 1) && 'font-bold'"
+                    :class="[(competitor.place === 1) && !event.eventStatus.live && 'font-bold', event.eventStatus.live && 'text-amber-400']"
                   >
                     <template v-if="competitor.results[1] && competitor.results[1].periodName === 'penalties'">{{ competitor.results[1].value }}</template>
                   </div>

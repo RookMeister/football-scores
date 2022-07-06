@@ -1,7 +1,8 @@
 tsconfig.json
 package.json
-pnppm-lock.yaml
+pnpm-lock.yaml
 docker-compose.yml
+.npmrc
 
 # Editor directories and files
 .vscode
