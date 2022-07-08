@@ -15,7 +15,7 @@ const dates = [
 ];
 const activeRate = ref(1);
 const activePosition = ref(1);
-const transform = computed(() => `transform: translate(-${activeRate.value * innerWidth}px, 0);`)
+const transform = computed(() => `transform: translateX(-${activeRate.value * innerWidth}px);`)
 const activeDate = computed(() => dates[activePosition.value].date);
 const url = computed(() => `/api/matches/${activeDate.value}/`);
 
@@ -29,7 +29,7 @@ const getLiveMin = (time: string) => {
 
 const target = ref<HTMLElement | null>(null)
 const { lengthX } = useSwipe(target, {
-  passive: false,
+  passive: true,
   onSwipe(e: TouchEvent) {
     const rate = activePosition.value + 1/innerWidth * lengthX.value
     if (rate > 2 || rate < 0) {
