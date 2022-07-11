@@ -15,7 +15,7 @@ const dates = [
 ];
 const activeRate = ref(1);
 const activePosition = ref(1);
-const transform = computed(() => `transform: translateX(-${activeRate.value * innerWidth}px);`)
+const transform = computed(() => `transform: translate3d(${-activeRate.value * innerWidth}px, 0px, 0px);`)
 const activeDate = computed(() => dates[activePosition.value].date);
 const url = computed(() => `/api/matches/${activeDate.value}/`);
 
@@ -28,14 +28,19 @@ const getLiveMin = (time: string) => {
 }
 
 const target = ref<HTMLElement | null>(null)
-const { lengthX } = useSwipe(target, {
-  passive: true,
+const { lengthX, direction } = useSwipe(target, {
+  passive: false,
+  onSwipeStart(e: TouchEvent) {
+    console.log(1, direction.value);
+  },
   onSwipe(e: TouchEvent) {
-    const rate = activePosition.value + 1/innerWidth * lengthX.value
-    if (rate > 2 || rate < 0) {
-      activeRate.value = activePosition.value;
-    } else {
-      activeRate.value = rate;
+    if ((direction.value === 'LEFT') || (direction.value === 'RIGHT')) {
+      const rate = activePosition.value + 1/innerWidth * lengthX.value
+      if (rate > 2 || rate < 0) {
+        activeRate.value = activePosition.value;
+      } else {
+        activeRate.value = rate;
+      }
     }
   },
   onSwipeEnd(e: TouchEvent, direction: SwipeDirection) {
@@ -53,8 +58,8 @@ const { lengthX } = useSwipe(target, {
 <template>
   <nav class="px-6 flex w-full justify-between text-center"  ref="contaiter">
     <div
-      @click="activeDate = item.date"
-      v-for="item in dates"
+      @click="activePosition = i; activeRate = i"
+      v-for="(item, i) in dates"
       :key="item.title"
       :class="(activeDate === item.date) && 'text-red-500 border-b-red-500'"
       class="p-2 block grow border-b-2"
@@ -63,7 +68,7 @@ const { lengthX } = useSwipe(target, {
     </div>
   </nav>
   <div ref="target">
-    <div class="flex" :style="transform">
+    <div class="flex target" :style="transform">
       <div v-for="(item, i) in dates" :key="item.date" class="flex-shrink-0 w-full">
         <div v-if="!isFetching && (i === activePosition)" class="flex flex-col">
           <template v-if="matches">
@@ -117,3 +122,11 @@ const { lengthX } = useSwipe(target, {
     </div>
   </div>
 </template>
+
+<style lang="less">
+.target {
+  // transition-duration: 0.3s;
+  // transition: all 0.3s;
+  // transform-style: preserve-3d;
+}
+</style>
