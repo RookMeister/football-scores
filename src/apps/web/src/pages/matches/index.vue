@@ -2,7 +2,7 @@
 import { computed, ref } from 'vue';
 import ContentLoader from '@web/components/ContentLoader.vue';
 import { format, formatISO, startOfYesterday, startOfTomorrow  } from 'date-fns';
-import { useFetch, useSwipe } from '@vueuse/core';
+import { useFetch, useSwipe, useElementSize } from '@vueuse/core';
 import type { SwipeDirection } from '@vueuse/core'
 import { IMatchesResponce } from '@interfaces/matches.interface';
 
@@ -13,9 +13,12 @@ const dates = [
   { title: 'Сегодня', date: formatISO(new Date(), { representation: 'date' }), index: 1 },
   { title: 'Завтра', date: formatISO(startOfTomorrow(), { representation: 'date' }), index: 2 }
 ];
+const currentDirection = ref<SwipeDirection | null>(null);
+const y = ref(0);
+const currentY = ref(0);
 const activeRate = ref(1);
 const activePosition = ref(1);
-const transform = computed(() => `transform: translate3d(${-activeRate.value * innerWidth}px, 0px, 0px);`)
+const transform = computed(() => `transform: translate3d(${-activeRate.value * innerWidth}px, ${-y.value}px, 0px);`)
 const activeDate = computed(() => dates[activePosition.value].date);
 const url = computed(() => `/api/matches/${activeDate.value}/`);
 
@@ -27,26 +30,47 @@ const getLiveMin = (time: string) => {
   return min + "'";
 }
 
-const target = ref<HTMLElement | null>(null)
-const { lengthX, direction } = useSwipe(target, {
+const target = ref<HTMLElement | null>(null);
+const { height: targetH } = useElementSize(target);
+const { lengthX, lengthY, direction } = useSwipe(target, {
   passive: false,
   onSwipe(e: TouchEvent) {
-    if ((direction.value === 'LEFT') || (direction.value === 'RIGHT')) {
-      const rate = activePosition.value + 1/innerWidth * lengthX.value
+    if (!currentDirection.value) {
+      currentDirection.value = direction.value;
+    }
+    if ((currentDirection.value === 'LEFT') || (currentDirection.value === 'RIGHT')) {
+      const rate = activePosition.value + 1/innerWidth * lengthX.value;
       if (rate > 2 || rate < 0) {
         activeRate.value = activePosition.value;
       } else {
         activeRate.value = rate;
       }
+    } else if ((currentDirection.value === 'UP') || (currentDirection.value === 'DOWN')) {
+      const value = currentY.value + lengthY.value;
+      const height = targetH.value - innerHeight + 42;
+      if (value > 0 && value < height) {
+        y.value = value
+      } else if (value < 0) {
+        y.value = 0;
+      } else if (value > height) {
+        y.value = height;
+      }
     }
   },
   onSwipeEnd(e: TouchEvent, direction: SwipeDirection) {
-    const value = Math.round(activeRate.value)
-    if (value > 2 || value < 0) {
-      activeRate.value = activePosition.value;
-    } else {
-      activePosition.value = value;
-      activeRate.value = value;
+    currentDirection.value = null;
+    if (direction === 'LEFT' || direction === 'RIGHT') {
+      const value = Math.round(activeRate.value);
+      if (value > 2 || value < 0) {
+        activeRate.value = activePosition.value;
+      } else {
+        activePosition.value = value;
+        activeRate.value = value;
+      }
+    } else if (direction === 'UP' || direction === 'DOWN') {
+      // if (y.value > 0 || y.value < innerHeight) {
+        currentY.value = y.value;
+      // }
     }
   },
 })
@@ -64,7 +88,7 @@ const { lengthX, direction } = useSwipe(target, {
       {{ item.title }}
     </div>
   </nav>
-  <div ref="target">
+  <div class="overflow-hidden" ref="target">
     <div class="flex target" :style="transform">
       <div v-for="(item, i) in dates" :key="item.date" class="flex-shrink-0 w-full">
         <div v-if="!isFetching && (i === activePosition)" class="flex flex-col">
