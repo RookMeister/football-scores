@@ -30,9 +30,6 @@ const getLiveMin = (time: string) => {
 const target = ref<HTMLElement | null>(null)
 const { lengthX, direction } = useSwipe(target, {
   passive: false,
-  onSwipeStart(e: TouchEvent) {
-    console.log(1, direction.value);
-  },
   onSwipe(e: TouchEvent) {
     if ((direction.value === 'LEFT') || (direction.value === 'RIGHT')) {
       const rate = activePosition.value + 1/innerWidth * lengthX.value
