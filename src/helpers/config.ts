@@ -5,7 +5,7 @@ dotenv.config();
 
 const DEVELOPMENT = "DEVELOPMENT";
 const PRODUCTION = "PRODUCTION";
-const TEST = "test";
+const TEST = "TEST";
 
 /*
   Defining schemas
@@ -51,7 +51,7 @@ export default ConfigSchema.parse({
   ...process.env,
   SERVER_PORT: parseInt(process.env.SERVER_PORT || '4000'),
   BOT_PORT: parseInt(process.env.BOT_PORT || '3000'),
-  isProduction: process.env.NODE_ENV === 'PRODUCTION',
-  isDevelopment: process.env.NODE_ENV === 'DEVELOPMENT',
+  isProduction: process.env.NODE_ENV === PRODUCTION,
+  isDevelopment: process.env.NODE_ENV === DEVELOPMENT,
   isTest: process.env.NODE_ENV === TEST,
 });
