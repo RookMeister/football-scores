@@ -1,10 +1,76 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, ref, reactive } from 'vue';
 import ContentLoader from '@web/components/ContentLoader.vue';
 import { format, formatISO, startOfYesterday, startOfTomorrow  } from 'date-fns';
-import { useFetch, useSwipe, useElementSize } from '@vueuse/core';
-import type { SwipeDirection } from '@vueuse/core'
+import { useFetch, useEventListener } from '@vueuse/core';
 import { IMatchesResponce } from '@interfaces/matches.interface';
+
+
+const { abs, floor, round } = Math;
+const coordsStart = reactive<{x: number, y:number}>({ x: 0, y: 0 });
+const coordsEnd = reactive<{x: number, y:number}>({ x: 0, y: 0 });
+const diffX = computed(() => coordsStart.x - coordsEnd.x);
+const diffY = computed(() => coordsStart.y - coordsEnd.y);
+const isSwiping = ref(false);
+const isScroll = ref(false);
+const direction = computed(() => {
+  if (abs(diffX.value) > abs(diffY.value)) {
+    return diffX.value > 0 ? 'LEFT' : 'RIGHT'
+  }
+  else {
+    return diffY.value > 0 ? 'UP' : 'DOWN'
+  }
+})
+const getTouchEventCoords = (e: TouchEvent) => [e.touches[0].clientX, e.touches[0].clientY];
+const updateCoordsStart = (x: number, y: number) => {
+  coordsStart.x = x
+  coordsStart.y = y
+}
+const updateCoordsEnd = (x: number, y: number) => {
+  coordsEnd.x = x
+  coordsEnd.y = y
+}
+
+useEventListener(document, 'touchstart', (e: TouchEvent) => {
+  const [x, y] = getTouchEventCoords(e)
+  updateCoordsStart(x, y)
+  if (direction.value === 'UP' || direction.value === 'DOWN') {
+    isScroll.value = true;
+  } else {
+    e.preventDefault();
+  }
+})
+useEventListener(document, 'touchmove', (e: TouchEvent) => {
+  if (!isSwiping.value) isSwiping.value = true;
+  if (direction.value === 'LEFT' || direction.value === 'RIGHT') {
+    if (!isScroll.value) {
+      const rate = activeRate.value = activePosition.value + 1/innerWidth * diffX.value;
+      activeRate.value = (rate > 2 || rate < 0) ? activePosition.value : rate;
+    }
+  }
+  const [x, y] = getTouchEventCoords(e);
+  updateCoordsEnd(x, y);
+})
+useEventListener(document, 'touchend', (e: TouchEvent) => {
+  if (!isScroll.value) {
+    const rate = (direction.value === 'RIGHT') ? floor(activeRate.value) : round(activeRate.value);
+    if (rate > 2 || rate < 0) {
+      activeRate.value = activePosition.value;
+    } else {
+      activeRate.value = rate;
+      activePosition.value = rate;
+
+    }
+  }
+  isSwiping.value = false;
+  isScroll.value = false;
+})
+useEventListener(document, 'touchcancel', (e: TouchEvent) => {
+  isSwiping.value = false;
+  isScroll.value = false;
+})
+
+const transform = computed(() => `transition-duration: ${isSwiping.value ? 0 : 300}ms;transform: translate3d(${-activeRate.value * innerWidth}px, 0px, 0px);`)
 
 const IMG_URL = import.meta.env.VITE_IMG_URL;
 
@@ -13,12 +79,9 @@ const dates = [
   { title: 'Сегодня', date: formatISO(new Date(), { representation: 'date' }), index: 1 },
   { title: 'Завтра', date: formatISO(startOfTomorrow(), { representation: 'date' }), index: 2 }
 ];
-const currentDirection = ref<SwipeDirection | null>(null);
-const y = ref(0);
-const currentY = ref(0);
-const activeRate = ref(1);
+
 const activePosition = ref(1);
-const transform = computed(() => `transform: translate3d(${-activeRate.value * innerWidth}px, ${-y.value}px, 0px);`)
+const activeRate = ref(1);
 const activeDate = computed(() => dates[activePosition.value].date);
 const url = computed(() => `/api/matches/${activeDate.value}/`);
 
@@ -29,57 +92,12 @@ const getLiveMin = (time: string) => {
   const [min] = time.split(':');
   return min + "'";
 }
-
-const target = ref<HTMLElement | null>(null);
-const { height: targetH } = useElementSize(target);
-const { lengthX, lengthY, direction } = useSwipe(target, {
-  passive: false,
-  onSwipe(e: TouchEvent) {
-    if (!currentDirection.value) {
-      currentDirection.value = direction.value;
-    }
-    if ((currentDirection.value === 'LEFT') || (currentDirection.value === 'RIGHT')) {
-      const rate = activePosition.value + 1/innerWidth * lengthX.value;
-      if (rate > 2 || rate < 0) {
-        activeRate.value = activePosition.value;
-      } else {
-        activeRate.value = rate;
-      }
-    } else if ((currentDirection.value === 'UP') || (currentDirection.value === 'DOWN')) {
-      const value = currentY.value + lengthY.value;
-      const height = targetH.value - innerHeight + 42;
-      if (value > 0 && value < height) {
-        y.value = value
-      } else if (value < 0) {
-        y.value = 0;
-      } else if (value > height) {
-        y.value = height;
-      }
-    }
-  },
-  onSwipeEnd(e: TouchEvent, direction: SwipeDirection) {
-    currentDirection.value = null;
-    if (direction === 'LEFT' || direction === 'RIGHT') {
-      const value = Math.round(activeRate.value);
-      if (value > 2 || value < 0) {
-        activeRate.value = activePosition.value;
-      } else {
-        activePosition.value = value;
-        activeRate.value = value;
-      }
-    } else if (direction === 'UP' || direction === 'DOWN') {
-      // if (y.value > 0 || y.value < innerHeight) {
-        currentY.value = y.value;
-      // }
-    }
-  },
-})
 </script>
 
 <template>
-  <nav class="px-6 flex w-full justify-between text-center"  ref="contaiter">
+  <nav class="px-6 flex w-full z-10 justify-between text-center sticky top-0 bg-white">
     <div
-      @click="activePosition = i; activeRate = i"
+      @click="activePosition = i"
       v-for="(item, i) in dates"
       :key="item.title"
       :class="(activeDate === item.date) && 'text-red-500 border-b-red-500'"
@@ -88,10 +106,10 @@ const { lengthX, lengthY, direction } = useSwipe(target, {
       {{ item.title }}
     </div>
   </nav>
-  <div class="overflow-hidden" ref="target">
-    <div class="flex target" :style="transform">
-      <div v-for="(item, i) in dates" :key="item.date" class="flex-shrink-0 w-full">
-        <div v-if="!isFetching && (i === activePosition)" class="flex flex-col">
+  <div class="slider">
+    <div class="body" :style="transform">
+      <div v-for="item in dates" class="flex-shrink-0 w-full">
+        <div v-if="(matches || isSwiping) && (activePosition === item.index)&& !isFetching" class="flex flex-col">
           <template v-if="matches">
             <div v-for="season in matches.seasons" :key="season.id" class="mt-4 divide-y divide-y-reverse">
               <div class="px-6 py-2 font-bold border-b">{{ season.titleRu }}</div>
@@ -145,9 +163,24 @@ const { lengthX, lengthY, direction } = useSwipe(target, {
 </template>
 
 <style lang="less">
-.target {
-  // transition-duration: 0.3s;
-  // transition: all 0.3s;
-  // transform-style: preserve-3d;
+.slider {
+  margin-left: auto;
+  margin-right: auto;
+  position: relative;
+  overflow: hidden;
+  list-style: none;
+  padding: 0;
+  touch-action: pan-y;
+  width: 100%;
+  height: 100%;
+  & > .body {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    display: flex;
+    transition-property: transform;
+    box-sizing: content-box;
+  }
 }
 </style>
