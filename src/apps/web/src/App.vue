@@ -1,5 +1,5 @@
 <template>
-  <div class="text-base overflow-x-hidden">
+  <div class="text-base">
     <RouterView />
   </div>
 </template>
