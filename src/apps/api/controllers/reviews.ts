@@ -4,6 +4,7 @@ import { IYouTubeVideo } from '@interfaces/youtube.interface';
 import { RouteHandlerMethod } from 'fastify';
 import ReviewsModel from '@api/models/Review';
 import config from '@helpers/config';
+import logger from '@helpers/logger';
 
 export const getReviews: RouteHandlerMethod = async (req, reply): Promise<any> => {
 	try {
@@ -45,6 +46,7 @@ export const getReviewMatches = async (): Promise<any[] | null> => {
         });
       }
     })
+    logger.info({ msg: data.map(d => d.title) });
     return data
   } else {
     return null;
