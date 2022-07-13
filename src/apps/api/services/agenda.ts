@@ -20,7 +20,6 @@ agenda.define('check reviews', async () => {
     }
   }
   logger.info({ msg: 'finish check reviews' });
-
 })
 
 export const initAgenda = async () => {

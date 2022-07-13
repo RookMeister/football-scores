@@ -16,6 +16,10 @@ body {
   background-color: var(--tg-theme-bg-color, #FFFFFF);
 }
 
+.bg-theme {
+  background-color: var(--tg-theme-bg-color, #FFFFFF);
+}
+
 button {
   outline: none;
   border: none;

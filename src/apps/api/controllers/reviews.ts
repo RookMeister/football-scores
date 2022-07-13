@@ -46,7 +46,6 @@ export const getReviewMatches = async (): Promise<any[] | null> => {
         });
       }
     })
-    logger.info({ msg: data.map(d => d.title) });
     return data
   } else {
     return null;
