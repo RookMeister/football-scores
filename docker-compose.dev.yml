@@ -60,7 +60,7 @@ services:
     env_file: ./.env
     working_dir: /home/node
     command: >
-      /bin/bash -c "npm install --global pnpm && npm install -g @ionic/cli && cd ./apps/web-app && pnpm install && ionic serve"
+      /bin/bash -c "npm install --global pnpm && npm install -g @ionic/cli && cd ./apps/web-app && pnpm install && pnpm dev"
     tty: true
     volumes:
       - ./src/apps/web-app:/home/node/apps/web-app

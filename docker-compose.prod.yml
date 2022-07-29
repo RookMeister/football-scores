@@ -37,21 +37,38 @@ services:
       - api
     networks:
       - app-network
-  web:
+  # web:
+  #   image: node:16
+  #   container_name: web
+  #   # restart: unless-stopped
+  #   ports:
+  #     - 80:3000
+  #   env_file: ./.env
+  #   working_dir: /home/node
+  #   command: >
+  #     /bin/bash -c "npm install --global pnpm && cd ./apps/web && pnpm install && pnpm build && pnpm preview"
+  #   tty: true
+  #   volumes:
+  #     - ./src/apps/web:/home/node/apps/web
+  #     - ./src/interfaces:/home/node/interfaces
+  #     - ./src/helpers:/home/node/helpers
+  #   depends_on:
+  #     - api
+  #   networks:
+  #     - app-network
+  web-app:
     image: node:16
-    container_name: web
-    # restart: unless-stopped
+    container_name: web-app
     ports:
       - 80:3000
     env_file: ./.env
     working_dir: /home/node
     command: >
-      /bin/bash -c "npm install --global pnpm && cd ./apps/web && pnpm install && pnpm build && pnpm preview"
+      /bin/bash -c "npm install --global pnpm && npm install -g @ionic/cli && cd ./apps/web-app && pnpm install && pnpm build && pnpm preview"
     tty: true
     volumes:
-      - ./src/apps/web:/home/node/apps/web
+      - ./src/apps/web-app:/home/node/apps/web-app
       - ./src/interfaces:/home/node/interfaces
-      - ./src/helpers:/home/node/helpers
     depends_on:
       - api
     networks:
