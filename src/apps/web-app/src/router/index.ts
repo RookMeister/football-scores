@@ -10,22 +10,22 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/home',
     name: 'Главная',
-    component: () => import('@/views/HomePage.vue'),
+    component: () => import('@web/views/HomePage.vue'),
   },
   {
     path: '/matches',
     name: 'Матчи',
-    component: () => import('@/views/MatchesPage.vue'),
+    component: () => import('@web/views/MatchesPage.vue'),
   },
   {
     path: '/standings',
     name: 'Соревнования',
-    component: () => import('@/views/HomePage.vue'),
+    component: () => import('@web/views/HomePage.vue'),
   },
   {
     path: '/settings',
     name: 'Настройки',
-    component: () => import('@/views/HomePage.vue'),
+    component: () => import('@web/views/HomePage.vue'),
   },
   {
     path: '/tabs/',

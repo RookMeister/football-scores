@@ -2,7 +2,7 @@
 import { computed, ref } from 'vue';
 import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonSegment, IonSegmentButton, IonIcon, IonLabel, } from '@ionic/vue';
 import { logoYoutube } from 'ionicons/icons';
-import ContentLoader from '@/components/core/ContentLoader.vue';
+import ContentLoader from '@web/components/core/ContentLoader.vue';
 import { format, formatISO, startOfYesterday, startOfTomorrow } from 'date-fns';
 import { useFetch } from '@vueuse/core';
 import { IMatchesResponce } from '@interfaces/matches.interface';

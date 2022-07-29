@@ -16,7 +16,7 @@
       "jest"
     ],
     "paths": {
-      "@/*": ["/src/*"],
+      "@web/*": ["./src/*"],
       "@interfaces/*": ["../../interfaces/*"],
     },
     "lib": [
