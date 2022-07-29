@@ -1,0 +1,7 @@
+{
+  "name": "footballScoresIos",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "vue"
+}
