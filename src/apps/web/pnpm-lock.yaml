@@ -1,11 +1,13 @@
 lockfileVersion: 5.4
 
 specifiers:
+  '@ionic/vue': ^6.1.14
   '@types/node': ^18.0.0
   '@vitejs/plugin-vue': ^2.3.3
   '@vueuse/core': ^8.7.5
   autoprefixer: ^10.4.7
   date-fns: ^2.28.0
+  ionicons: ^6.0.2
   less: ^4.1.3
   postcss: ^8.4.14
   tailwindcss: ^3.1.4
@@ -17,8 +19,10 @@ specifiers:
   zod: ^3.17.3
 
 dependencies:
+  '@ionic/vue': 6.2.0
   '@vueuse/core': 8.7.5_vue@3.2.37
   date-fns: 2.28.0
+  ionicons: 6.0.2
   vue: 3.2.37
   vue-router: 4.1.1_vue@3.2.37
   zod: 3.17.3
@@ -54,6 +58,21 @@ packages:
       '@babel/helper-validator-identifier': 7.18.6
       to-fast-properties: 2.0.0
 
+  /@ionic/core/6.2.0:
+    resolution: {integrity: sha512-3qUNsVcSAdrjhIhPr5M2RRnh+1xuc9RFaxoeUgI9xQ0YjTmn2FWiH4urDCXuE/rZAwnvHF4X17P0L2EqCPSfWA==}
+    dependencies:
+      '@stencil/core': 2.17.1
+      ionicons: 6.0.2
+      tslib: 2.4.0
+    dev: false
+
+  /@ionic/vue/6.2.0:
+    resolution: {integrity: sha512-tF+922bNLBTrN204CRUBDDRc6E+ygkMExxH2RX/QlXyRaVbSbmVlYXFe56nCu8caZgFlX711lHhHL1D+FsnOng==}
+    dependencies:
+      '@ionic/core': 6.2.0
+      ionicons: 6.0.2
+    dev: false
+
   /@nodelib/fs.scandir/2.1.5:
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
     engines: {node: '>= 8'}
@@ -74,6 +93,18 @@ packages:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.13.0
     dev: true
+
+  /@stencil/core/2.16.1:
+    resolution: {integrity: sha512-s/UJp9qxExL3DyQPT70kiuWeb3AdjbUZM+5lEIXn30I2DLcLYPOPXfsoWJODieQywq+3vPiLZeIdkoqjf6jcSw==}
+    engines: {node: '>=12.10.0', npm: '>=6.0.0'}
+    hasBin: true
+    dev: false
+
+  /@stencil/core/2.17.1:
+    resolution: {integrity: sha512-ErjQsNALgZQ9SYeBHhqwL1UO+Zbptwl3kwrRJC2tGlc3G/T6UvPuaKr+PGsqI+CZGia+0+R5EELQvFu74mYeIg==}
+    engines: {node: '>=12.10.0', npm: '>=6.0.0'}
+    hasBin: true
+    dev: false
 
   /@types/node/18.0.1:
     resolution: {integrity: sha512-CmR8+Tsy95hhwtZBKJBs0/FFq4XX7sDZHlGGf+0q+BRZfMbOTkzkj0AFAuTyXbObDIoanaBBW0+KEW+m3N16Wg==}
@@ -702,6 +733,12 @@ packages:
     dev: true
     optional: true
 
+  /ionicons/6.0.2:
+    resolution: {integrity: sha512-AyKfFaUKVoBz4eB8XkU7H1R5HFnVsgq5ijqSdbXC0lES9PDK/J6LUQz6XUJq0mVVQF5k9kczSPOLMW3mszG0mQ==}
+    dependencies:
+      '@stencil/core': 2.16.1
+    dev: false
+
   /is-binary-path/2.1.0:
     resolution: {integrity: sha512-ZMERYes6pDydyuGidse7OsHxtbI7WVeUEozgR/g7rd0xUimYNlvZRE/K2MgZTjWy725IfelLeVcEM97mmtRGXw==}
     engines: {node: '>=8'}
@@ -1072,7 +1109,6 @@ packages:
 
   /tslib/2.4.0:
     resolution: {integrity: sha512-d6xOpEDfsi2CZVlPQzGeux8XMwLT9hssAsaPYExaQMuYskwb+x1x7J371tWlbBdWHroy99KnVB6qIkUbs5X3UQ==}
-    dev: true
 
   /typescript/4.7.4:
     resolution: {integrity: sha512-C0WQT0gezHuw6AdY1M2jxUO83Rjf0HP7Sk1DtXj6j1EwkQNZrHAg2XPWlq62oqEhYvONq5pkC2Y9oPljWToLmQ==}
