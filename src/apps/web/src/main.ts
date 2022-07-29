@@ -25,12 +25,14 @@ import './assets/css/vendor.css';
 //   )
 // ];
 
-const routes = [
+const routesBot = [
   { path: '/bot/', component: Home },
   { path: '/bot/matches/', component: Matches  },
   { path: '/bot/standings/', component: Standings  },
   { path: '/bot/standings/:id/', component: Standings  }
 ]
+
+const routes = (window as any).Telegram.WebApp.initData || !import.meta.env.PROD ? routesBot: [];
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
