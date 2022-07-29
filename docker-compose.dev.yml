@@ -64,6 +64,7 @@ services:
     tty: true
     volumes:
       - ./src/apps/web-app:/home/node/apps/web-app
+      - ./src/interfaces:/home/node/interfaces
     depends_on:
       - api
     networks:
