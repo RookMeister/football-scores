@@ -1,7 +1,7 @@
 <template>
   <ion-app>
-    <!-- <ion-router-outlet /> -->
-    <ion-tabs>
+    <ion-router-outlet v-if="isNeedTabs" />
+    <ion-tabs v-else>
       <ion-router-outlet />
       <ion-tab-bar slot="bottom">
         <ion-tab-button tab="home" href="/home">
@@ -29,6 +29,8 @@
 // import { IonApp, IonRouterOutlet } from '@ionic/vue';
 import { IonApp, IonRouterOutlet, IonIcon, IonLabel, IonTabBar, IonTabButton, IonTabs } from '@ionic/vue';
 import { calendarOutline, homeOutline, settingsOutline, listOutline } from 'ionicons/icons';
+
+const isNeedTabs = !!(window as any).Telegram.WebApp.initData;
 </script>
 
 <style>
