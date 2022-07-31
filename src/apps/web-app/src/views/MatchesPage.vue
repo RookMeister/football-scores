@@ -7,6 +7,8 @@ import { format, formatISO, parseISO } from 'date-fns';
 import { useFetch } from '@vueuse/core';
 import { IMatchesResponce } from '@interfaces/matches.interface';
 
+const IMG_URL = import.meta.env.VITE_IMG_URL;
+
 const getSlugForImg = (key: number) => data.value && (data.value.participants[key].frontConfig.logos.default || '').replace('500_500.png', '30_30.png');
 const getLiveMin = (time: string) =>  (time.split(':')[0] + "'");
 
@@ -78,7 +80,7 @@ const changeDate = (date: CustomEvent) => {
                           v-if="getSlugForImg(team.participantId)"
                           class="h-auto mr-1"
                           style="width: 24px;height: 24px;"
-                          :src="'https://s74794.cdn.ngenix.net/m/' + getSlugForImg(team.participantId)"
+                          :src="IMG_URL + getSlugForImg(team.participantId)"
                         >
                         <svg v-else width="24" height="24" style="color: #ddd;" viewBox="0 0 100 100"><path d="M50.045 0L12 6.997v54.591c0 4.202 1.882 8.74 5.604 13.493 3.3 4.205 7.971 8.511 13.883 12.8 7.381 5.336 14.905 9.31 18.558 11.119 3.659-1.81 11.183-5.782 18.562-11.119 5.916-4.288 10.58-8.594 13.877-12.8 3.725-4.759 5.613-9.29 5.613-13.493V6.998L50.045 0z" fill="currentColor" fill-rule="nonzero"></path></svg>
                         <div class="truncate" :class="(team.place === 1) && !match.eventStatus.live && 'font-bold'">
