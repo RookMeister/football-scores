@@ -20,7 +20,7 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/standings',
     name: 'Соревнования',
-    component: () => import('@web/views/HomePage.vue'),
+    component: () => import('@web/views/StandingsPage.vue'),
   },
   {
     path: '/settings',
