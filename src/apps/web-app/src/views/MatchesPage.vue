@@ -114,21 +114,21 @@ const changeDate = (date: CustomEvent) => {
       <ContentLoader v-else class="mt-8 px-6 py-2">
         <div class="w-full h-20 rounded-lg mt-2" v-for="i in 8" :key="i"></div>
       </ContentLoader>
+      <ion-modal
+        :is-open="isModalVisible"
+        :can-dismiss="canDismiss"
+        :initial-breakpoint="0.6"
+        :breakpoints="[0.6]"
+        handle-behavior="cycle"
+      >
+        <ion-content class="ion-padding">
+          <div class="ion-margin-top">
+            <ion-datetime :value="activeDate" @ionChange="changeDate" :first-day-of-week="1"  presentation="date" />
+          </div>
+        </ion-content>
+      </ion-modal>
     </ion-content>
   </ion-page>
-  <ion-modal
-    :is-open="isModalVisible"
-    :can-dismiss="canDismiss"
-    :initial-breakpoint="0.6"
-    :breakpoints="[0.6]"
-    handle-behavior="cycle"
-  >
-    <ion-content class="ion-padding">
-      <div class="ion-margin-top">
-        <ion-datetime :value="activeDate" @ionChange="changeDate" :first-day-of-week="1"  presentation="date" />
-      </div>
-    </ion-content>
-  </ion-modal>
 </template>
 
 <style>
