@@ -118,7 +118,6 @@ const changeDate = (date: CustomEvent) => {
       :initial-breakpoint="0.6"
       :breakpoints="[0.6]"
       handle-behavior="cycle"
-      :presenting-element="$el"
     >
       <ion-content class="ion-padding">
         <div class="ion-margin-top">
