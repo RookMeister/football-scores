@@ -29,17 +29,14 @@ const checkLiveMatchesInStanding = (seasonId: number) => {
   }
   return false;
 }
-const changeDate = (date: CustomEvent) => {
+const changeDate = (date: CustomEvent | null) => {
   canDismiss.value = true;
   setTimeout(() => {
     isModalVisible.value = false;
-    activeDate.value = formatISO(parseISO(date.detail.value),  { representation: 'date' });
+    date && (activeDate.value = formatISO(parseISO(date.detail.value),  { representation: 'date' }));
     canDismiss.value = false;
   }, 0);
 }
-
-const datetime = ref();
-const cancel = () => datetime.value.$el.cancel();
 </script>
 
 <template>
@@ -126,11 +123,8 @@ const cancel = () => datetime.value.$el.cancel();
       handle-behavior="cycle"
     >
       <ion-content class="ion-padding">
-        <ion-datetime ref="datetime" :value="activeDate" @ionChange="changeDate" :first-day-of-week="1"  presentation="date">
-          <ion-buttons slot="buttons">
-            <ion-button @click="cancel">Закрыть</ion-button>
-            </ion-buttons>
-        </ion-datetime>
+        <ion-datetime :value="activeDate" class="ion-margin-top" @ionChange="changeDate" :first-day-of-week="1"  presentation="date" />
+        <ion-button @click="changeDate(null)" class="ion-margin-top" expand="block">Закрыть</ion-button>
       </ion-content>
     </ion-modal>
   </ion-page>
@@ -140,6 +134,7 @@ const cancel = () => datetime.value.$el.cancel();
 ion-modal {
   --background: rgba(44, 39, 45, 0.2);
 
+  
   &::part(content) {
     backdrop-filter: blur(6px);
   }
