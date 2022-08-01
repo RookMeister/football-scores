@@ -23,7 +23,12 @@ const isLiveMatches = computed(() => data.value && data.value.items.some(match =
 
 const isModalVisible = ref(false);
 const canDismiss = ref(false);
-
+const checkLiveMatchesInStanding = (seasonId: number) => {
+  if (data.value) {
+    return data.value.items.some(match => (match.eventStatus.live === isLive.value) && (match.seasonId === seasonId))
+  }
+  return false;
+}
 const changeDate = (date: CustomEvent) => {
   canDismiss.value = true;
   setTimeout(() => {
@@ -32,6 +37,9 @@ const changeDate = (date: CustomEvent) => {
     canDismiss.value = false;
   }, 0);
 }
+
+const datetime = ref();
+const cancel = () => datetime.value.$el.cancel();
 </script>
 
 <template>
@@ -56,7 +64,7 @@ const changeDate = (date: CustomEvent) => {
     <ion-content :fullscreen="true">
       <div v-if="data && !isFetching" class="flex flex-col ">
         <template v-if="isLiveMatches">
-          <ion-card v-for="season in data.seasons" :key="season.id">
+          <ion-card v-for="season in data.seasons" v-show="checkLiveMatchesInStanding(season.id)" :key="season.id">
             <div class="px-6 py-2 font-bold">{{ season.titleRu }}</div>
             <div class="px-6">
               <div v-for="match in data.items" :key="match.id" v-show="match.seasonId === season.id">
@@ -115,18 +123,34 @@ const changeDate = (date: CustomEvent) => {
     <ion-modal
       :is-open="isModalVisible"
       :can-dismiss="canDismiss"
-      :initial-breakpoint="0.6"
-      :breakpoints="[0.6]"
       handle-behavior="cycle"
     >
       <ion-content class="ion-padding">
-        <div class="ion-margin-top">
-          <ion-datetime :value="activeDate" @ionChange="changeDate" :first-day-of-week="1"  presentation="date" />
-        </div>
+        <ion-datetime ref="datetime" :value="activeDate" @ionChange="changeDate" :first-day-of-week="1"  presentation="date">
+          <ion-buttons slot="buttons">
+            <ion-button @click="cancel">Закрыть</ion-button>
+            </ion-buttons>
+        </ion-datetime>
       </ion-content>
     </ion-modal>
   </ion-page>
 </template>
 
-<style>
+<style lang="less">
+ion-modal {
+  --background: rgba(44, 39, 45, 0.2);
+  
+  &::part(content) {
+    backdrop-filter: blur(6px);
+  }
+
+  ion-content {
+    --background: transparent;
+    --padding-top: 25vh;
+  }
+
+  ion-datetime {
+    border-radius: 16px;
+  }
+}
 </style>
