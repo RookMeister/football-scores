@@ -29,6 +29,7 @@ export default defineConfig({
   plugins: [
     vue(),
     VitePWA({
+      includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
       manifest: {
         name: 'Football Scores',
         short_name: 'FS',
