@@ -1,18 +1,16 @@
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonModal, IonSegment, IonSegmentButton, IonButtons, IonButton, IonIcon, IonLabel, IonDatetime, IonCard } from '@ionic/vue';
-import { logoYoutube, calendarNumberOutline } from 'ionicons/icons';
+import { IonContent, IonHeader, IonAccordionGroup, IonAccordion, IonPage, IonItem, IonTitle, IonToolbar, IonModal, IonSegment, IonSegmentButton, IonButtons, IonButton, IonIcon, IonLabel, IonDatetime, IonCard } from '@ionic/vue';
+import { calendarOutline } from 'ionicons/icons';
 import ContentLoader from '@web/components/core/ContentLoader.vue';
-import { format, formatISO, parseISO } from 'date-fns';
+import MatchItem from '@web/components/MatchItem.vue';
+import { formatISO, parseISO } from 'date-fns';
 import { useFetch } from '@vueuse/core';
 import { IMatchesResponce } from '@interfaces/matches.interface';
 
 const IMG_URL = import.meta.env.VITE_IMG_URL;
 const currentDate = new Date();
 currentDate.setHours(currentDate.getHours() + currentDate.getTimezoneOffset() / 60);
-
-const getSlugForImg = (key: number) => data.value && (data.value.participants[key].frontConfig.logos.default || '').replace('500_500.png', '30_30.png');
-const getLiveMin = (time: string) =>  (time.split(':')[0] + "'");
 
 const activeDate = ref(formatISO(currentDate, { representation: 'date' }));
 const activeBlock = ref('Все');
@@ -47,7 +45,7 @@ const changeDate = (date: CustomEvent | null) => {
       <ion-toolbar>
         <ion-buttons slot="end">
           <ion-button @click="isModalVisible = true" expand="block">
-            <ion-icon :icon="calendarNumberOutline" />
+            <ion-icon :icon="calendarOutline" />
           </ion-button>
         </ion-buttons>
         <ion-title>{{ $route.name }}</ion-title>
@@ -61,62 +59,46 @@ const changeDate = (date: CustomEvent | null) => {
       </ion-toolbar>
     </ion-header>
     <ion-content :fullscreen="true">
-      <div v-if="data && !isFetching" class="flex flex-col ">
+      <div v-if="data && !isFetching" class="flex flex-col text-base">
         <template v-if="isLiveMatches">
-          <ion-card v-for="season in data.seasons" v-show="checkLiveMatchesInStanding(season.id)" :key="season.id">
-            <div class="px-6 py-2 font-bold">{{ season.titleRu }}</div>
-            <div class="px-6">
-              <div v-for="match in data.items" :key="match.id" v-show="match.seasonId === season.id">
-                <template v-if="match.eventStatus.live === isLive">
-                  <div v-if="match.seasonId === season.id" class="pt-2 flex text-sm items-center justify-between text-neutral-400">
-                    <div class="flex">
-                      <div>{{ format(new Date(match.startTime), "dd.MM, HH:mm") }}</div>
-                      <div class="ml-2">{{ match.eventStatus.titleRu }}</div>
-                    </div>
-                    <a v-if="match.eventStatus.ended && match.reviewUrl" target="_blank" :href="match.reviewUrl">
-                      <ion-icon :icon="logoYoutube"></ion-icon>
-                    </a>
+          <ion-card>
+            <ion-accordion-group >
+              <ion-accordion value="ended">
+                <ion-item slot="header" lines="none">
+                  <div class="py-2 font-bold flex items-center">
+                    Завершенные
                   </div>
-                  <div v-if="match.seasonId === season.id" class="flex justify-between py-2">
-                    <div class="w-56">
-                      <div v-for="team in match.competitors" :key="team.participantId" class="flex items-center">
-                        <img
-                          v-if="getSlugForImg(team.participantId)"
-                          class="h-auto mr-1"
-                          style="width: 24px;height: 24px;"
-                          :src="IMG_URL + getSlugForImg(team.participantId)"
-                        >
-                        <svg v-else width="24" height="24" style="color: #ddd;" viewBox="0 0 100 100"><path d="M50.045 0L12 6.997v54.591c0 4.202 1.882 8.74 5.604 13.493 3.3 4.205 7.971 8.511 13.883 12.8 7.381 5.336 14.905 9.31 18.558 11.119 3.659-1.81 11.183-5.782 18.562-11.119 5.916-4.288 10.58-8.594 13.877-12.8 3.725-4.759 5.613-9.29 5.613-13.493V6.998L50.045 0z" fill="currentColor" fill-rule="nonzero"></path></svg>
-                        <div class="truncate" :class="(team.place === 1) && !match.eventStatus.live && 'font-bold'">
-                          {{ data.participants[team.participantId].titleRu }}
-                        </div>
-                      </div>
-                    </div>
-                    <div v-if="!match.eventStatus.notStarted" class="flex items-center">
-                      <div v-if="match.eventStatus.live && match.eventClock" class="text-xs mr-2 text-amber-400">
-                        {{ getLiveMin(match.eventClock) }}
-                      </div>
-                      <div>
-                        <div
-                          v-for="team in match.competitors"
-                          :key="team.participantId + team.place"
-                          :class="[(team.place === 1) && !match.eventStatus.live && 'font-bold', match.eventStatus.live && 'text-amber-400']"
-                          class="flex items-center"
-                        >
-                          {{ team.results[0] && team.results[0].value }}
-                        </div>
-                      </div>
-                    </div>
+                </ion-item>
+                <div slot="content" class="px-4 mt-2">
+                  <template v-for="match in data.items">
+                    <MatchItem :key="match.id" v-if="match.eventStatus.ended" :match="match" :participants="data.participants" />
+                  </template>
+                </div>
+              </ion-accordion>
+            </ion-accordion-group>
+          </ion-card>
+          <ion-card>
+            <ion-accordion-group :multiple="true">
+              <ion-accordion v-for="season in data.seasons" v-show="checkLiveMatchesInStanding(season.id)" :key="season.id" :value="season.id.toString()">
+                <ion-item slot="header" class="-ml-1">
+                  <div class="py-2 font-bold flex items-center">
+                    <img v-if="season.competition.frontConfig.logos.default" class="h-auto mr-1" style="width: 36px;height: 36px;" :src="IMG_URL + season.competition.frontConfig.logos.default">
+                    {{ season.titleRu }}
                   </div>
-                </template>
-              </div>
-            </div>
+                </ion-item>
+                <div slot="content" class="px-4 mt-2">
+                  <template v-for="match in data.items">
+                    <MatchItem :key="match.id" v-if="match.seasonId === season.id" :match="match" :participants="data.participants" />
+                  </template>
+                </div>
+              </ion-accordion>
+            </ion-accordion-group>
           </ion-card>
         </template>
-        <template v-else>Нет подходящих матчей</template>
+        <ion-card v-else><div class="px-4 py-2 font-bold">Нет подходящих матчей</div></ion-card>
       </div>
-      <ContentLoader v-else class="mt-8 px-6 py-2">
-        <div class="w-full h-20 rounded-lg mt-2" v-for="i in 8" :key="i"></div>
+      <ContentLoader v-else class="px-4 py-2">
+        <div style="height: 52px;margin-bottom: 16px" class="w-full rounded-lg" v-for="i in 16" :key="i"></div>
       </ContentLoader>
     </ion-content>
     <ion-modal
@@ -134,11 +116,14 @@ const changeDate = (date: CustomEvent | null) => {
 </template>
 
 <style lang="less">
-  ion-datetime {
-    border-radius: 16px;
-    --background: var(--ion-background-color, #fff);
-  }
-  a {
-    color: red;
-  }
+ion-datetime {
+  border-radius: 16px;
+  --background: var(--ion-background-color, #fff);
+}
+ion-card {
+  margin: 8px 16px;
+}
+a {
+  color: red;
+}
 </style>
