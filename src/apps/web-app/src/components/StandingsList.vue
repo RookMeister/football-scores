@@ -66,7 +66,7 @@ function showDetail(view: string) {
     </ion-header>
     <ion-toolbar class="border-b" style="--border-width: 0px;top: 0px;position: sticky;--background: var(--ion-background-color, #fff);">
       <ion-segment :value="activeBlock" @ionChange="segmentChanged($event)">
-        <ion-segment-button v-for="item in viewsStanding" :key="item.title" :value="item.leagueType">
+        <ion-segment-button v-for="item in viewsStanding" :key="item.title" :value="item.leagueType" class="px-2">
           <ion-label>{{ item.title }}</ion-label>
         </ion-segment-button>
       </ion-segment>

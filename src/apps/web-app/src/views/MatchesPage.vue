@@ -8,11 +8,13 @@ import { useFetch } from '@vueuse/core';
 import { IMatchesResponce } from '@interfaces/matches.interface';
 
 const IMG_URL = import.meta.env.VITE_IMG_URL;
+const currentDate = new Date();
+currentDate.setHours(currentDate.getHours() + currentDate.getTimezoneOffset() / 60);
 
 const getSlugForImg = (key: number) => data.value && (data.value.participants[key].frontConfig.logos.default || '').replace('500_500.png', '30_30.png');
 const getLiveMin = (time: string) =>  (time.split(':')[0] + "'");
 
-const activeDate = ref(formatISO(new Date(), { representation: 'date' }));
+const activeDate = ref(formatISO(currentDate, { representation: 'date' }));
 const activeBlock = ref('Все');
 const isLive = computed(() => activeBlock.value === 'Live');
 const url = computed(() => `/api/matches/${activeDate.value}/`);
@@ -121,9 +123,10 @@ const changeDate = (date: CustomEvent | null) => {
       :is-open="isModalVisible"
       :can-dismiss="canDismiss"
       handle-behavior="cycle"
+      :initial-breakpoint="0.65"
     >
       <ion-content class="ion-padding">
-        <ion-datetime :value="activeDate" class="ion-margin-top" @ionChange="changeDate" :first-day-of-week="1"  presentation="date" />
+        <ion-datetime :value="activeDate" @ionChange="changeDate" :first-day-of-week="1"  presentation="date" />
         <ion-button @click="changeDate(null)" class="ion-margin-top" expand="block">Закрыть</ion-button>
       </ion-content>
     </ion-modal>
@@ -131,21 +134,11 @@ const changeDate = (date: CustomEvent | null) => {
 </template>
 
 <style lang="less">
-ion-modal {
-  --background: rgba(44, 39, 45, 0.2);
-
-  
-  &::part(content) {
-    backdrop-filter: blur(6px);
-  }
-
-  ion-content {
-    --background: transparent;
-    --padding-top: 25vh;
-  }
-
   ion-datetime {
     border-radius: 16px;
+    --background: var(--ion-background-color, #fff);
   }
-}
+  a {
+    color: red;
+  }
 </style>
