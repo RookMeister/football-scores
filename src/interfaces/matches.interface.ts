@@ -21,6 +21,7 @@ interface IMatchesSeason {
     priority: number;
     prioritySum: number;
     sport: { id: number; urn: string; titleRu: string; priority: number; }
+    frontConfig: { '@class': string; logos: { default: string; }; };
     titleRu: string;
     titleRuShort: string;
     urn: string;
