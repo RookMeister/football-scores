@@ -50,7 +50,9 @@
     "@vitejs/plugin-vue": "^3.0.1",
     "@vue/compiler-sfc": "^3.2.37",
     "vite": "^3.0.4",
-    "vue-tsc": "^0.39.2"
+    "vite-plugin-pwa": "^0.12.3",
+    "vue-tsc": "^0.39.2",
+    "workbox-precaching": "^6.5.4"
   },
   "description": "An Ionic project"
 }
