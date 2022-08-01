@@ -5,11 +5,11 @@ import { IonTabs } from '@ionic/vue';
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
-    redirect: '/home'
+    redirect: '/matches'
   },
   {
-    path: '/home',
-    name: 'Главная',
+    path: '/fav',
+    name: 'Избранное',
     component: () => import('@web/views/HomePage.vue'),
   },
   {
@@ -33,7 +33,7 @@ const routes: Array<RouteRecordRaw> = [
     children: [
       {
         path: '/',
-        redirect: 'home',
+        redirect: 'matches',
       },
     ],
   },

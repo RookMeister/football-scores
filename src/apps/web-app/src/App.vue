@@ -4,21 +4,21 @@
     <ion-tabs v-else>
       <ion-router-outlet />
       <ion-tab-bar slot="bottom">
-        <ion-tab-button tab="home" href="/home">
-          <ion-icon :icon="homeOutline"></ion-icon>
-          <ion-label>Главная</ion-label>
-        </ion-tab-button>
         <ion-tab-button tab="calendar" href="/matches">
-          <ion-icon :icon="calendarOutline"></ion-icon>
+          <ion-icon :icon="football"></ion-icon>
           <ion-label>Матчи</ion-label>
         </ion-tab-button>
         <ion-tab-button tab="standings" href="/standings">
-          <ion-icon :icon="listOutline"></ion-icon>
-          <ion-label>Соревнования</ion-label>
+          <ion-icon :icon="apps"></ion-icon>
+          <ion-label>Лиги</ion-label>
+        </ion-tab-button>
+        <ion-tab-button tab="home" href="/fav">
+          <ion-icon :icon="notifications"></ion-icon>
+          <ion-label>Избранное</ion-label>
         </ion-tab-button>
         <ion-tab-button tab="settings" href="/settings">
-          <ion-icon :icon="settingsOutline"></ion-icon>
-          <ion-label>Настройки</ion-label>
+          <ion-icon :icon="ellipsisHorizontal"></ion-icon>
+          <ion-label>Ещё</ion-label>
         </ion-tab-button>
       </ion-tab-bar>
     </ion-tabs>
@@ -28,12 +28,15 @@
 <script lang="ts" setup>
 // import { IonApp, IonRouterOutlet } from '@ionic/vue';
 import { IonApp, IonRouterOutlet, IonIcon, IonLabel, IonTabBar, IonTabButton, IonTabs } from '@ionic/vue';
-import { calendarOutline, homeOutline, settingsOutline, listOutline } from 'ionicons/icons';
+import { football, notifications, ellipsisHorizontal, apps } from 'ionicons/icons';
 
 const isNeedTabs = !!(window as any).Telegram.WebApp.initData;
 </script>
 
 <style>
+ion-segment-button::before {
+  border-width: 1px;
+}
 ion-toolbar {
   --background: var(--ion-background-color, #fff);
 }
