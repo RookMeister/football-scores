@@ -139,7 +139,7 @@ const cancel = () => datetime.value.$el.cancel();
 <style lang="less">
 ion-modal {
   --background: rgba(44, 39, 45, 0.2);
-  
+
   &::part(content) {
     backdrop-filter: blur(6px);
   }
