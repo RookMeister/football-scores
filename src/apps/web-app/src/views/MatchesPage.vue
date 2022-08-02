@@ -47,8 +47,11 @@ const changeDate = (date: CustomEvent | null) => {
   canDismiss.value = true;
   setTimeout(() => {
     isModalVisible.value = false;
-    date && (activeDate.value = formatISO(parseISO(date.detail.value),  { representation: 'date' }));
-    updateData();
+    if (date) {
+      const dateNow = formatISO(parseISO(date.detail.value));
+      (dateNow !== activeDate.value && (activeDate.value = dateNow,  { representation: 'date' }));
+      updateData();
+    }
     canDismiss.value = false;
   }, 0);
 }

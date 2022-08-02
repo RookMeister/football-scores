@@ -31,16 +31,23 @@ import { IonApp, IonRouterOutlet, IonIcon, IonLabel, IonTabBar, IonTabButton, Io
 import { football, notifications, ellipsisHorizontal, apps } from 'ionicons/icons';
 
 const isNeedTabs = !!(window as any).Telegram.WebApp.initData;
+
+// Detects if device is on iOS
+const isIos = () => {
+  const userAgent = window.navigator.userAgent.toLowerCase();
+  return /iphone|ipad|ipod/.test( userAgent );
+}
+// Detects if device is in standalone mode
+const isInStandaloneMode = () => ('standalone' in window.navigator) && ((window.navigator as any).standalone);
+
+// Checks if should display install popup notification:
+if (isIos() && !isInStandaloneMode()) {
+  // this.setState({ showInstallMessage: true });
+}
 </script>
 
 <style>
 ion-toolbar {
   --background: var(--ion-background-color, #fff);
-}
-ion-tab-bar {
-  padding-bottom: env(safe-area-inset-bottom, 16px);
-}
-ion-tab-button > ion-icon {
-  font-size: 20px;
 }
 </style>
