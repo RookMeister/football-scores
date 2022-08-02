@@ -24,9 +24,9 @@ const isFetching = ref(false);
 const updateData = async (target?: any) => {
   isFetching.value = true;
   const { data: matches } = await useFetch(url, { method: 'GET' }, { refetch: true }).json<IMatchesResponce>();
+  target && target.complete();
   data.value = matches.value;
   isFetching.value = false;
-  target && target.complete();
 }
 
 updateData();
