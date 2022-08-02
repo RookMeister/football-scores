@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
-import { IonContent, IonHeader, IonAccordionGroup, IonAccordion, IonPage, IonItem, IonTitle, IonToolbar, IonModal, IonSegment, IonSegmentButton, IonButtons, IonButton, IonIcon, IonLabel, IonDatetime, IonCard } from '@ionic/vue';
+import { IonContent, IonHeader, IonAccordionGroup, IonAccordion, IonPage, IonItem, IonTitle, IonToolbar, IonModal, IonSegment, IonSegmentButton, IonButtons, IonButton, IonIcon, IonLabel, IonDatetime, IonCard, IonRefresher, IonRefresherContent } from '@ionic/vue';
 import { calendarOutline } from 'ionicons/icons';
 import ContentLoader from '@web/components/core/ContentLoader.vue';
 import MatchItem from '@web/components/MatchItem.vue';
@@ -18,8 +18,21 @@ const isLive = computed(() => activeBlock.value === 'Live');
 const url = computed(() => `/api/matches/${activeDate.value}/`);
 const segmentChanged = (ev: CustomEvent) => (activeBlock.value = ev.detail.value);
 
-const { data, isFetching } = useFetch(url, { method: 'GET' }, { refetch: true }).json<IMatchesResponce>();
+const data = ref<IMatchesResponce | null>(null);
+const isFetching = ref(false);
+
+const updateData = async () => {
+  isFetching.value = true;
+  const { data: matches } = await useFetch(url, { method: 'GET' }, { refetch: true }).json<IMatchesResponce>();
+  data.value = matches.value;
+  isFetching.value = false;
+}
+
+updateData()
+
+// const { data, isFetching } = useFetch(url, { method: 'GET' }, { refetch: true }).json<IMatchesResponce>();
 const isLiveMatches = computed(() => data.value && data.value.items.some(match => match.eventStatus.live === isLive.value));
+const isEndedMatches = computed(() => data.value && data.value.items.some(match => match.eventStatus.ended));
 
 const isModalVisible = ref(false);
 const canDismiss = ref(false);
@@ -29,11 +42,19 @@ const checkLiveMatchesInStanding = (seasonId: number) => {
   }
   return false;
 }
+const refresh = (event: CustomEvent) => { 
+  data.value = null
+  setTimeout(() => {
+    updateData()
+    event.target?.complete();
+  }, 2000);
+}
 const changeDate = (date: CustomEvent | null) => {
   canDismiss.value = true;
   setTimeout(() => {
     isModalVisible.value = false;
     date && (activeDate.value = formatISO(parseISO(date.detail.value),  { representation: 'date' }));
+    updateData();
     canDismiss.value = false;
   }, 0);
 }
@@ -59,9 +80,12 @@ const changeDate = (date: CustomEvent | null) => {
       </ion-toolbar>
     </ion-header>
     <ion-content :fullscreen="true">
+    <ion-refresher slot="fixed" @ionRefresh="refresh">
+      <ion-refresher-content refreshing-spinner="circles" />
+    </ion-refresher>
       <div v-if="data && !isFetching" class="flex flex-col text-base">
         <template v-if="isLiveMatches">
-          <ion-card>
+          <ion-card v-if="isEndedMatches">
             <ion-accordion-group >
               <ion-accordion value="ended">
                 <ion-item slot="header" lines="none">
