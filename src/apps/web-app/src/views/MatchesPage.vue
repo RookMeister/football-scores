@@ -42,7 +42,7 @@ const checkLiveMatchesInStanding = (seasonId: number) => {
   }
   return false;
 }
-const refresh = (event: CustomEvent) => { 
+const refresh = (event: any) => { 
   data.value = null
   setTimeout(() => {
     updateData()
@@ -81,7 +81,7 @@ const changeDate = (date: CustomEvent | null) => {
     </ion-header>
     <ion-content :fullscreen="true">
     <ion-refresher slot="fixed" @ionRefresh="refresh">
-      <ion-refresher-content refreshing-spinner="circles" />
+      <ion-refresher-content />
     </ion-refresher>
       <div v-if="data && !isFetching" class="flex flex-col text-base">
         <template v-if="isLiveMatches">
