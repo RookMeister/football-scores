@@ -43,7 +43,6 @@ const checkLiveMatchesInStanding = (seasonId: number) => {
   return false;
 }
 const refresh = (event: any) => { 
-  data.value = null
   setTimeout(() => {
     updateData()
     event.target?.complete();
