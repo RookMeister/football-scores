@@ -21,16 +21,16 @@ const segmentChanged = (ev: CustomEvent) => (activeBlock.value = ev.detail.value
 const data = ref<IMatchesResponce | null>(null);
 const isFetching = ref(false);
 
-const updateData = async () => {
+const updateData = async (target?: any) => {
   isFetching.value = true;
   const { data: matches } = await useFetch(url, { method: 'GET' }, { refetch: true }).json<IMatchesResponce>();
   data.value = matches.value;
   isFetching.value = false;
+  target && target.complete();
 }
 
-updateData()
+updateData();
 
-// const { data, isFetching } = useFetch(url, { method: 'GET' }, { refetch: true }).json<IMatchesResponce>();
 const isLiveMatches = computed(() => data.value && data.value.items.some(match => match.eventStatus.live === isLive.value));
 const isEndedMatches = computed(() => data.value && data.value.items.some(match => match.eventStatus.ended));
 
@@ -42,12 +42,7 @@ const checkLiveMatchesInStanding = (seasonId: number) => {
   }
   return false;
 }
-const refresh = (event: any) => { 
-  setTimeout(() => {
-    updateData()
-    event.target?.complete();
-  }, 2000);
-}
+const refresh = (event: any) => updateData(event.target);
 const changeDate = (date: CustomEvent | null) => {
   canDismiss.value = true;
   setTimeout(() => {
