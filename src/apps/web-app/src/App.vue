@@ -40,7 +40,7 @@ ion-segment-button::before {
 ion-toolbar {
   --background: var(--ion-background-color, #fff);
 }
-ion-tabs {
+ion-tab-bar {
   padding-bottom: env(safe-area-inset-bottom, 16px);
 }
 ion-tab-button > ion-icon {
