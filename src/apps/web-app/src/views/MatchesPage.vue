@@ -79,13 +79,13 @@ const changeDate = (date: CustomEvent | null) => {
         </ion-segment>
       </ion-toolbar>
     </ion-header>
-    <ion-content :fullscreen="true">
-    <ion-refresher slot="fixed" @ionRefresh="refresh">
-      <ion-refresher-content />
-    </ion-refresher>
+    <ion-content :fullscreen="true" :force-overscroll="true">
+      <ion-refresher slot="fixed" @ionRefresh="refresh">
+        <ion-refresher-content />
+      </ion-refresher>
       <div v-if="data && !isFetching" class="flex flex-col text-base">
         <template v-if="isLiveMatches">
-          <ion-card v-if="isEndedMatches">
+          <ion-card v-if="isEndedMatches && !isLive">
             <ion-accordion-group >
               <ion-accordion value="ended">
                 <ion-item slot="header" lines="none">
