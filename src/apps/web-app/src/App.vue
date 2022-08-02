@@ -34,9 +34,6 @@ const isNeedTabs = !!(window as any).Telegram.WebApp.initData;
 </script>
 
 <style>
-ion-segment-button::before {
-  border-width: 1px;
-}
 ion-toolbar {
   --background: var(--ion-background-color, #fff);
 }
