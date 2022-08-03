@@ -80,7 +80,7 @@ const changeDate = (date: CustomEvent | null) => {
       <ion-refresher slot="fixed" @ionRefresh="refresh">
         <ion-refresher-content />
       </ion-refresher>
-      <div v-if="data && !isFetching" class="flex flex-col text-base">
+      <div v-if="data" class="flex flex-col text-base">
         <template v-if="isLiveMatches">
           <ion-card v-if="isEndedMatches && !isLive">
             <ion-accordion-group >
@@ -109,7 +109,7 @@ const changeDate = (date: CustomEvent | null) => {
                 </ion-item>
                 <div slot="content" class="px-4 mt-2">
                   <template v-for="match in data.items">
-                    <MatchItem :key="match.id" v-if="match.seasonId === season.id" :match="match" :participants="data.participants" />
+                    <MatchItem :key="match.id" v-if="(match.seasonId === season.id) && (match.eventStatus.live === isLive)" :match="match" :participants="data.participants" />
                   </template>
                 </div>
               </ion-accordion>
