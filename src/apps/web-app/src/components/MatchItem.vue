@@ -7,7 +7,7 @@ import { format } from 'date-fns';
 
 const props = defineProps<{ match: IEvent, participants: any }>();
 const IMG_URL = import.meta.env.VITE_IMG_URL;
-const getSlugForImg = (key: number) => props.participants[key].frontConfig.logos.default.replace('500_500.png', '30_30.png');
+const getSlugForImg = (key: number) =>props.participants[key].frontConfig.logos.default?.replace('500_500.png', '30_30.png');
 const getLiveMin = (time: string) =>  (time.split(':')[0] + "'");
 </script>
 

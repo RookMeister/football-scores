@@ -23,7 +23,7 @@ const isFetching = ref(false);
 
 const updateData = async (target?: any) => {
   isFetching.value = true;
-  const { data: matches } = await useFetch(url, { method: 'GET' }, { refetch: true }).json<IMatchesResponce>();
+  const { data: matches } = await useFetch(url, { method: 'GET' }).json<IMatchesResponce>();
   target && target.complete();
   data.value = matches.value;
   isFetching.value = false;
@@ -48,8 +48,8 @@ const changeDate = (date: CustomEvent | null) => {
   setTimeout(() => {
     isModalVisible.value = false;
     if (date) {
-      const dateNow = formatISO(parseISO(date.detail.value));
-      (dateNow !== activeDate.value && (activeDate.value = dateNow,  { representation: 'date' }));
+      const dateNow = formatISO(parseISO(date.detail.value), { representation: 'date' });
+      (dateNow !== activeDate.value && (activeDate.value = dateNow));
       updateData();
     }
     canDismiss.value = false;
@@ -82,39 +82,35 @@ const changeDate = (date: CustomEvent | null) => {
       </ion-refresher>
       <div v-if="data" class="flex flex-col text-base">
         <template v-if="isLiveMatches">
-          <ion-card v-if="isEndedMatches && !isLive">
-            <ion-accordion-group >
-              <ion-accordion value="ended">
-                <ion-item slot="header" lines="none">
-                  <div class="py-2 font-bold flex items-center">
-                    Завершенные
-                  </div>
-                </ion-item>
-                <div slot="content" class="px-4 mt-2">
-                  <template v-for="match in data.items">
-                    <MatchItem :key="match.id" v-if="match.eventStatus.ended" :match="match" :participants="data.participants" />
-                  </template>
+          <ion-accordion-group v-if="isEndedMatches && !isLive">
+            <ion-accordion value="ended">
+              <ion-item slot="header">
+                <div class="py-2 font-bold flex items-center">
+                  Завершенные
                 </div>
-              </ion-accordion>
-            </ion-accordion-group>
-          </ion-card>
-          <ion-card>
-            <ion-accordion-group :multiple="true">
-              <ion-accordion v-for="season in data.seasons" v-show="checkLiveMatchesInStanding(season.id)" :key="season.id" :value="season.id.toString()">
-                <ion-item slot="header" class="-ml-1">
-                  <div class="py-2 font-bold flex items-center">
-                    <img v-if="season.competition.frontConfig.logos.default" class="h-auto mr-1" style="width: 36px;height: 36px;" :src="IMG_URL + season.competition.frontConfig.logos.default">
-                    {{ season.titleRu }}
-                  </div>
-                </ion-item>
-                <div slot="content" class="px-4 mt-2">
-                  <template v-for="match in data.items">
-                    <MatchItem :key="match.id" v-if="(match.seasonId === season.id) && (match.eventStatus.live === isLive)" :match="match" :participants="data.participants" />
-                  </template>
+              </ion-item>
+              <div slot="content" class="px-4 mt-2">
+                <template v-for="match in data.items">
+                  <MatchItem :key="match.id" v-if="match.eventStatus.ended" :match="match" :participants="data.participants" />
+                </template>
+              </div>
+            </ion-accordion>
+          </ion-accordion-group>
+          <ion-accordion-group :multiple="true">
+            <ion-accordion v-for="season in data.seasons" v-show="checkLiveMatchesInStanding(season.id)" :key="season.id" :value="season.id.toString()">
+              <ion-item slot="header" class="-ml-1">
+                <div class="py-2 font-bold flex items-center">
+                  <img v-if="season.competition.frontConfig.logos.default" class="h-auto mr-1" style="width: 36px;height: 36px;" :src="IMG_URL + season.competition.frontConfig.logos.default">
+                  {{ season.titleRu }}
                 </div>
-              </ion-accordion>
-            </ion-accordion-group>
-          </ion-card>
+              </ion-item>
+              <div slot="content" class="px-4 mt-2">
+                <template v-for="match in data.items">
+                  <MatchItem :key="match.id" v-if="(match.seasonId === season.id) && (match.eventStatus.live === isLive)" :match="match" :participants="data.participants" />
+                </template>
+              </div>
+            </ion-accordion>
+          </ion-accordion-group>
         </template>
         <ion-card v-else><div class="px-4 py-2 font-bold">Нет подходящих матчей</div></ion-card>
       </div>
