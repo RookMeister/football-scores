@@ -106,7 +106,7 @@ const segmentChanged = (ev: CustomEvent) => (activeBlock.value = ev.detail.value
       </div>
       <ion-spinner v-if="isFetching" name="crescent" />
       <template v-else-if="table">
-        <template v-for="item in table.stageGroups">
+        <template v-for="item in table.stageGroups" :key="item.id">
           <h3 v-if="Object.keys(table.stageGroups).length > 1" class="mt-4">{{ item.titleRu }}</h3>
           <table class="px-6 w-full text-left border-spacing-y-2 border-separate table-auto">
             <thead>
@@ -120,7 +120,7 @@ const segmentChanged = (ev: CustomEvent) => (activeBlock.value = ev.detail.value
                 <th class="py-2 border-b border-b-gray-300 text-center w-8" scope="col">PTS</th>
               </tr>
             </thead>
-            <tr v-show="team.stageGroupId === item.id" v-for="team in table.items.sort((a: any, b: any) => a.standingTable.rank - b.standingTable.rank)" :key="team.participantId">
+            <tr v-show="(team.stageGroupId === item.id) && (team.standingsType === 'TOTAL')" v-for="team in table.items.sort((a: any, b: any) => a.standingTable.rank - b.standingTable.rank)" :key="team.participantId">
               <td>{{ team.standingTable.rank }}</td>
               <td class="w-32 flex items-center">
                 <img class="h-4 w-4 mr-2" :src="IMG_URL + getSlugImg(team.participantId, table)">

@@ -42,6 +42,7 @@ interface IStandingItem {
   participantId: number;
   eventIds: number[];
   standingTable: IStandingTable;
+  standingsType: 'FIRST_HALF_HOME' | 'HOME' | 'FIRST_HALF_AWAY' | 'SECOND_HALF_HOME' | 'TOTAL' | 'SECOND_HALF_AWAY' | 'SECOND_HALF_TOTAL' | 'AWAY'
   outcome?: string;
   outcomeColor?: string;
 }
