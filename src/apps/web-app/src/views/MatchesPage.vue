@@ -120,6 +120,7 @@ const changeDate = (date: CustomEvent | null) => {
       :is-open="isModalVisible"
       :can-dismiss="canDismiss"
       :keep-contents-mounted="true"
+      :presenting-element="$el"
     >
       <ion-header>
         <ion-toolbar>
@@ -131,17 +132,15 @@ const changeDate = (date: CustomEvent | null) => {
       </ion-header>
       <ion-content class="ion-padding">
         <ion-datetime :value="activeDate" @ionChange="changeDate" :first-day-of-week="1"  presentation="date" />
-        <!-- <ion-button @click="changeDate(null)" class="ion-margin-top" expand="block">Закрыть</ion-button> -->
       </ion-content>
     </ion-modal>
   </ion-page>
 </template>
 
 <style lang="less">
-// ion-modal {
-//   margin-bottom: calc(51px + env(safe-area-inset-bottom));
-// }
 ion-datetime {
+  max-width: 100%;
+  width: 100%;
   border-radius: 16px;
   --background: var(--ion-background-color, #fff);
 }
