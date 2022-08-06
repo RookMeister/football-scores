@@ -33,6 +33,7 @@ updateData();
 
 const isLiveMatches = computed(() => data.value && data.value.items.some(match => match.eventStatus.live === isLive.value));
 const isEndedMatches = computed(() => data.value && data.value.items.some(match => match.eventStatus.ended));
+const isEndedMatchesWithReview = computed(() => data.value && data.value.items.some(match => match.reviewUrl));
 
 const isModalVisible = ref(false);
 const canDismiss = ref(false);
@@ -83,6 +84,18 @@ const changeDate = (date: CustomEvent | null) => {
       <div v-if="data && !isFetching" class="flex flex-col text-base">
         <template v-if="isLiveMatches">
           <ion-accordion-group :multiple="true">
+          <ion-accordion v-if="isEndedMatches && !isLive && isEndedMatchesWithReview" value="review">
+              <ion-item slot="header">
+                <div class="py-2 font-bold flex items-center">
+                  Матчи с обзорами
+                </div>
+              </ion-item>
+              <div slot="content" class="px-4 mt-2">
+                <template v-for="match in data.items">
+                  <MatchItem :key="match.id" v-if="match.eventStatus.ended && match.reviewUrl" :match="match" :participants="data.participants" />
+                </template>
+              </div>
+            </ion-accordion>
             <ion-accordion v-if="isEndedMatches && !isLive" value="ended">
               <ion-item slot="header">
                 <div class="py-2 font-bold flex items-center">
