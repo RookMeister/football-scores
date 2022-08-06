@@ -22,7 +22,7 @@ const data = ref<IMatchesResponce | null>(null);
 const isFetching = ref(false);
 
 const updateData = async (target?: any) => {
-  isFetching.value = true;
+  !target && (isFetching.value = true);
   const { data: matches } = await useFetch(url, { method: 'GET' }).json<IMatchesResponce>();
   target && target.complete();
   data.value = matches.value;
@@ -80,10 +80,10 @@ const changeDate = (date: CustomEvent | null) => {
       <ion-refresher slot="fixed" @ionRefresh="refresh">
         <ion-refresher-content />
       </ion-refresher>
-      <div v-if="data" class="flex flex-col text-base">
+      <div v-if="data && !isFetching" class="flex flex-col text-base">
         <template v-if="isLiveMatches">
-          <ion-accordion-group v-if="isEndedMatches && !isLive">
-            <ion-accordion value="ended">
+          <ion-accordion-group :multiple="true">
+            <ion-accordion v-if="isEndedMatches && !isLive" value="ended">
               <ion-item slot="header">
                 <div class="py-2 font-bold flex items-center">
                   Завершенные
@@ -95,8 +95,6 @@ const changeDate = (date: CustomEvent | null) => {
                 </template>
               </div>
             </ion-accordion>
-          </ion-accordion-group>
-          <ion-accordion-group :multiple="true">
             <ion-accordion v-for="season in data.seasons" v-show="checkLiveMatchesInStanding(season.id)" :key="season.id" :value="season.id.toString()">
               <ion-item slot="header" class="-ml-1">
                 <div class="py-2 font-bold flex items-center">
@@ -121,18 +119,28 @@ const changeDate = (date: CustomEvent | null) => {
     <ion-modal
       :is-open="isModalVisible"
       :can-dismiss="canDismiss"
-      handle-behavior="cycle"
-      :initial-breakpoint="0.65"
+      :keep-contents-mounted="true"
     >
+      <ion-header>
+        <ion-toolbar>
+          <ion-buttons slot="start">
+            <ion-button  @click="changeDate(null)">Закрыть</ion-button>
+          </ion-buttons>
+          <ion-title>Выбор даты</ion-title>
+        </ion-toolbar>
+      </ion-header>
       <ion-content class="ion-padding">
         <ion-datetime :value="activeDate" @ionChange="changeDate" :first-day-of-week="1"  presentation="date" />
-        <ion-button @click="changeDate(null)" class="ion-margin-top" expand="block">Закрыть</ion-button>
+        <!-- <ion-button @click="changeDate(null)" class="ion-margin-top" expand="block">Закрыть</ion-button> -->
       </ion-content>
     </ion-modal>
   </ion-page>
 </template>
 
 <style lang="less">
+// ion-modal {
+//   margin-bottom: calc(51px + env(safe-area-inset-bottom));
+// }
 ion-datetime {
   border-radius: 16px;
   --background: var(--ion-background-color, #fff);

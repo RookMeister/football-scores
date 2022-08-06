@@ -74,7 +74,7 @@ const segmentChanged = (ev: CustomEvent) => (activeBlock.value = ev.detail.value
 </script>
 
 <template>
-  <ion-header class="ion-no-border">
+  <ion-header>
     <ion-toolbar>
       <ion-buttons slot="start">
         <ion-back-button :text="$route.name" />
