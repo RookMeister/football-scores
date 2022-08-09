@@ -12,7 +12,7 @@ const props = defineProps({ urn: String })
 const activeBlock = ref('Голы');
 // const tabs = ref(['Голы', 'Статистика', 'Составы', 'Видео']);
 const tabs = ref(['Голы', 'Видео']);
-const urlMatchDetail = computed(() => `/api/match/${props.urn}`);
+const urlMatchDetail = computed(() => `/api/match/${props.urn}/`);
 const { data: match } = useFetch(urlMatchDetail, { method: 'GET' }, { refetch: true }).json<IMatchResponce>();
 const segmentChanged = (ev: CustomEvent) => (activeBlock.value = ev.detail.value);
 match.value && match.value.header.competitors.sort((a: any, b: any) => a.priority - b.priority);
