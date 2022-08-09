@@ -2,6 +2,7 @@ import ReviewsModel from '@api/models/Review';
 import request from '@helpers/request';
 import { RouteHandlerMethod } from 'fastify';
 import { IMatchesResponce } from '@interfaces/matches.interface';
+import { IMatchResponce } from '@interfaces/match.interface';
 
 export const getListMatches: RouteHandlerMethod = async (req, reply): Promise<IMatchesResponce> => {
 	try {
@@ -14,6 +15,17 @@ export const getListMatches: RouteHandlerMethod = async (req, reply): Promise<IM
 		// throw boom.boomify(err as Error);
 		throw err;
 	}
+};
+
+export const getMatchDetail: RouteHandlerMethod = async (req, reply): Promise<IMatchResponce> => {
+  try {
+    const { urn } = (req.params as  { urn: string });
+    const match = await request<IMatchResponce>(`${process.env.FETCH_GET_MATCH_URL}/${urn}/review?materialsLimit=0`);
+    return match;
+  } catch (err) {
+    // throw boom.boomify(err as Error);
+    throw err;
+  }
 };
 
 const updateMatches = async (matches: IMatchesResponce, date: string): Promise<IMatchesResponce> => {
