@@ -54,7 +54,7 @@ export interface ICompetitionStagesGroups {
   priority: number;
   system: boolean;
 }
-interface ICompetitionInfoTags {
+export interface ICompetitionInfoTags {
   id: number;
   oldId: string;
   editDate: number;
