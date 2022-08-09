@@ -47,8 +47,8 @@ const tournamentsAll = computed(() => {
 })
 
 function showDetail(view: string) {
-  const nav = document.querySelector('ion-nav');
-  nav && nav.push(Standing, { view });
+  const nav = document.querySelector('ion-nav#standings-page');
+  nav && (nav as any).push(Standing, { view });
 }
 </script>
 

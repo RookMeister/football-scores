@@ -5,6 +5,6 @@ import StandingsList from '@web/components/StandingsList.vue';
 
 <template>
   <ion-page>
-    <ion-nav :root="StandingsList" />
+    <ion-nav id="standings-page" :root="StandingsList" />
   </ion-page>
 </template>
