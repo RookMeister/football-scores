@@ -5,6 +5,7 @@ import { IonIcon } from '@ionic/vue';
 import { logoYoutube } from 'ionicons/icons';
 import { format } from 'date-fns';
 
+defineEmits(['click'])
 const props = defineProps<{ match: IEvent, participants: any }>();
 const IMG_URL = import.meta.env.VITE_IMG_URL;
 const getSlugForImg = (key: number) =>props.participants[key].frontConfig.logos.default?.replace('500_500.png', '30_30.png');
@@ -21,7 +22,7 @@ const getLiveMin = (time: string) =>  (time.split(':')[0] + "'");
       <ion-icon :icon="logoYoutube"></ion-icon>
     </a>
   </div>
-  <div class="flex justify-between py-2">
+  <div class="flex justify-between py-2" @click="$emit('click')">
     <div class="w-56">
       <div v-for="team in match.competitors" :key="team.participantId" class="flex items-center">
         <img
