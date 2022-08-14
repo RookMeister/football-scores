@@ -25,6 +25,6 @@ agenda.define('check reviews', async () => {
 export const initAgenda = async () => {
   try {
     await agenda.start();
-    await agenda.every('0 01,02,17,20,23 * * *', 'check reviews');
+    await agenda.every('0 00,02,17,20,23 * * *', 'check reviews');
   } catch {}
 }
