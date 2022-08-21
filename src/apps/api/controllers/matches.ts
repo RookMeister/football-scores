@@ -32,8 +32,8 @@ const updateMatches = async (matches: IMatchesResponce, date: string): Promise<I
   const reviews = await ReviewsModel.findReviewsToday(date);
   matches.seasons = Object.values(matches.seasons).sort((a, b) => a.competition.priority - b.competition.priority);
   matches.items.forEach((match) => {
-    const team1 = matches.participants[match.competitors[0].participantId].titleRu;
-    const team2 = matches.participants[match.competitors[1].participantId].titleRu;
+    const team1 = matches.participants[match.competitors[0].participantId].titleRu.replace(' М', '');
+    const team2 = matches.participants[match.competitors[1].participantId].titleRu.replace(' М', '');
     const title = new RegExp(`${team1}|${team2}`);
     const review = reviews.find(r => r.title.match(title));
     match.reviewUrl = review ? review.url : '';
