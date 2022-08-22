@@ -4,7 +4,6 @@ import { IYouTubeVideo } from '@interfaces/youtube.interface';
 import { RouteHandlerMethod } from 'fastify';
 import ReviewsModel from '@api/models/Review';
 import config from '@helpers/config';
-import logger from '@helpers/logger';
 
 export const getReviews: RouteHandlerMethod = async (req, reply): Promise<any> => {
 	try {
@@ -38,7 +37,7 @@ export const getReviewMatches = async (): Promise<any[] | null> => {
               videoId: v.id.videoId,
               url: `https://www.youtube.com/watch?v=${v.id.videoId}`,
               date: v.snippet.publishedAt,
-              dateDay: UTCToday(),
+              dateDay: new Date(v.snippet.publishedAt).toLocaleDateString('fr-CA'),
               title: v.snippet.title.replace('-', '—'),
               channelTitle: v.snippet.channelTitle
             })
