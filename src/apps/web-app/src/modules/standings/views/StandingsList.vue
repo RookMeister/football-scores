@@ -1,51 +1,24 @@
 <script setup lang="ts">
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonSegment, IonSegmentButton, IonLabel } from '@ionic/vue';
-import { computed, ref } from 'vue';
-import ContentLoader from '@web/components/core/ContentLoader.vue';
+import { ref } from 'vue';
 import { useFetch } from '@vueuse/core';
+
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonSegment, IonSegmentButton, IonLabel } from '@ionic/vue';
+import Standing from '@web/modules/standings/views/Standing.vue';
+import ContentLoader from '@web/components/ContentLoader.vue';
+
 import { ICompetitionsResponce } from '@interfaces/competitions.interface';
-import Standing from '@web/components/Standing.vue';
+
+const { isFetching, data } = useFetch('/api/competition/', { method: 'GET' }, { refetch: true }).json<ICompetitionsResponce>();
 
 const IMG_URL = import.meta.env.VITE_IMG_URL;
-
-const topStanding = [
-  'Российская Премьер-Лига', 'Английская Премьер-лига', 'Ла Лига', 'Серия A', 'Бундеслига', 'Лига 1', 'Эредивизи', 'MLS'
-];
+const activeBlock = ref('NATIONAL');
 const viewsStanding = [
   { title: 'Национальные', leagueType: 'NATIONAL'},
   { title: 'Клубные', leagueType: 'CLUB'},
   { title: 'Сборные', leagueType: 'INTERNATIONAL'}
 ];
 
-const activeBlock = ref('NATIONAL');
 const segmentChanged = (ev: CustomEvent) => (activeBlock.value = ev.detail.value);
-
-const { isFetching, data  } = useFetch('/api/competition/', { method: 'GET' }, { refetch: true }).json<ICompetitionsResponce>();
-
-const tournamentsAll = computed(() => {
-  const arr = data.value?.items.slice(0) || [];
-
-  arr.sort((a, b) => {
-    const find1 = topStanding.find(s => s === a.title);
-    const find2 = topStanding.find(s => s === b.title);
-    if (find1 && find2) {
-      return 1;
-    } else if (find1) {
-      return -1;
-    } else if (find2) {
-      return 1;
-    } else if (a.title.includes('Кубок')) {
-      return -1;
-    } if (b.title.includes('Кубок')) {
-      return 1;
-    }
-
-    return a.title.localeCompare(b.title)
-  })
-
-  return arr;
-})
-
 function showDetail(view: string) {
   const nav = document.querySelector('ion-nav#standings-page');
   nav && (nav as any).push(Standing, { view });
@@ -71,8 +44,8 @@ function showDetail(view: string) {
         </ion-segment-button>
       </ion-segment>
     </ion-toolbar>
-    <div v-if="!isFetching" class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-12 gap-4 mt-4 px-6">
-      <div v-for="item in tournamentsAll" v-show="activeBlock === item.leagueType" @click="showDetail(item.urn)" :key="item.titleShort" class="flex items-center flex-col text-center p-2 rounded-lg overflow-hidden" >
+    <div v-if="!isFetching && data" class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-12 gap-4 mt-4 px-6">
+      <div v-for="item in data.items" v-show="activeBlock === item.leagueType" @click="showDetail(item.urn)" :key="item.titleShort" class="flex items-center flex-col text-center p-2 rounded-lg overflow-hidden" >
         <img v-if="item.image" class="h-20 w-20" :src="IMG_URL + item.image">
         <div v-else class="h-20 w-20" />
         <div class="mt-1 mb-auto">{{ item.titleShort || item.title }}</div>

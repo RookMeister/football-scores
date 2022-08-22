@@ -93,7 +93,7 @@ export interface IEvent {
   eventType: { frontConfig: { '@class': string; config: []; }; urn: string; titleRu: string; };
   medalEvent: boolean;
 }
-interface IEventCompetitors {
+export interface IEventCompetitors {
   participantId: number;
   priority: number;
   results: {

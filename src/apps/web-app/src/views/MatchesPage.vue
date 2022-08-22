@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { IonPage,  IonNav } from '@ionic/vue';
-import MatchesList from '@web/components/MatchesList.vue';
+import MatchesList from '@web/modules/matches/views/MatchesList.vue';
 
 </script>
 

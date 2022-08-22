@@ -18,7 +18,24 @@ export const getStanding: RouteHandlerMethod = async (req, reply): Promise<TLEAG
 
 export const getAllCompetitions: RouteHandlerMethod = async (req, reply): Promise<ICompetitionsResponce> => {
 	try {
+		const topStanding = ['Российская Премьер-Лига', 'Английская Премьер-лига', 'Ла Лига', 'Серия A', 'Бундеслига', 'Лига 1', 'Эредивизи', 'MLS'];
     const standings = await request<ICompetitionsResponce>(`${process.env.FETCH_GET_ALL_COMPETITIONS_URL}`);
+		standings.items.sort((a, b) => {
+			const find1 = topStanding.find(s => s === a.title);
+			const find2 = topStanding.find(s => s === b.title);
+			if (find1 && find2) {
+				return 1;
+			} else if (find1) {
+				return -1;
+			} else if (find2) {
+				return 1;
+			} else if (a.title.includes('Кубок')) {
+				return -1;
+			} if (b.title.includes('Кубок')) {
+				return 1;
+			}
+			return a.title.localeCompare(b.title)
+		})
 		return standings;
 	} catch (err) {
 		// throw boom.boomify(err as Error);

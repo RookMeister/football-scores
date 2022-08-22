@@ -4,7 +4,7 @@ import { ref, computed, defineProps } from 'vue';
 import { format } from 'date-fns';
 import { useFetch } from '@vueuse/core';
 import { ICompetitionResponce } from '@interfaces/competitions.interface';
-import { ICompetitionStandingLeagueResponce,  ICompetitionStandingCupResponce } from '@interfaces/standings.interface';
+import { ICompetitionStandingLeagueResponce,  ICompetitionStandingCupResponce, IEventCompetitors } from '@interfaces/standings.interface';
 
 type TLEAGUEORCUP = ICompetitionStandingLeagueResponce | ICompetitionStandingCupResponce;
 
@@ -52,7 +52,7 @@ const getStanding = () => {
   }
 }
 
-const sortCompetitors = (arr: any[], condition = false) => {
+const sortCompetitors = (arr: IEventCompetitors[], condition = false) => {
   const newArr = [...arr];
   return newArr.sort((a, b) => {
     if (condition) {
@@ -139,6 +139,7 @@ const segmentChanged = (ev: CustomEvent) => (activeBlock.value = ev.detail.value
         <nav class="flex w-full justify-between mt-4 text-center px-6">
           <div
             v-for="round in playoff.cupRounds"
+            :key="round.roundTitle"
             class="p-2 block border-b-2 grow"
             @click="activeRound = round.roundTitle"
             :class="(activeRound === round.roundTitle) && 'text-red-500 border-b-red-500'"
@@ -147,8 +148,8 @@ const segmentChanged = (ev: CustomEvent) => (activeBlock.value = ev.detail.value
           </div>
         </nav>
         <div v-if="playoff" class="flex mt-4 w-full">
-          <template v-show="round.roundTitle === activeRound" v-for="round in playoff.cupRounds">
-            <table v-if="round.roundTitle === activeRound" class="w-full text-left border-spacing-y-2 table-auto">
+          <template v-for="round in playoff.cupRounds">
+            <table v-if="round.roundTitle === activeRound" :key="`${round.roundTitle}table`" class="w-full text-left border-spacing-y-2 table-auto">
               <thead>
                 <tr>
                   <th class="pl-6 py-2 border-b border-b-gray-300" scope="col">Team</th>
@@ -156,12 +157,13 @@ const segmentChanged = (ev: CustomEvent) => (activeBlock.value = ev.detail.value
                   <th class="py-2 border-b border-b-gray-300 text-center w-18" scope="col"></th>
                 </tr>
               </thead>
-              <tr v-for="math in round.eventGroups" class="flex border-b border-b-gray-300 w-screen">
+              <tr v-for="(math, i) in round.eventGroups" :key="`eventGroups${i}`" class="flex border-b border-b-gray-300 w-screen">
                 <td class="block mr-auto items-center py-2 pl-6">
                   <template v-for="(event, i) in math.events">
                     <template v-if="i === 0">
                       <div
                         v-for="competitor in sortCompetitors(event.competitors)"
+                        :key="competitor.participantId"
                         class="flex items-center"
                         :class="(winsTeam[competitor.participantId] !== round.roundTitle) && 'font-bold'"
                       >
@@ -177,12 +179,12 @@ const segmentChanged = (ev: CustomEvent) => (activeBlock.value = ev.detail.value
                     </template>
                   </template>
                 </td>
-                <td v-for="(event, i) in math.events" class="text-center py-2 relative pr-6 flex" :class="[(i === 0) && 'align-top', (i === 1) && 'align-bottom']">
+                <td v-for="(event, i) in math.events" :key="event.id" class="text-center py-2 relative pr-6 flex" :class="[(i === 0) && 'align-top', (i === 1) && 'align-bottom']">
                   <div v-if="(i === 0) && event.eventStatus.live && event.eventClock" class="text-xs mr-2 text-amber-400 flex items-center">
                     {{ getLiveMin(event.eventClock) }}
                   </div>
                   <div v-if="i === 0">
-                    <div v-for="competitor in sortCompetitors(event.competitors)" :class="(competitor.place === 1) && 'font-bold'">
+                    <div v-for="competitor in sortCompetitors(event.competitors)" :key="competitor.participantId + 'i0'" :class="(competitor.place === 1) && 'font-bold'">
                       <template v-if="competitor.results[0].periodName === 'normaltime_and_overtime'">{{ competitor.results[0].value }}</template>
                     </div>
                   </div>
@@ -192,6 +194,7 @@ const segmentChanged = (ev: CustomEvent) => (activeBlock.value = ev.detail.value
                   <div v-if="(i === 1) && !event.eventStatus.notStarted">
                       <div
                         v-for="competitor in sortCompetitors(event.competitors, true)"
+                         :key="competitor.participantId + 'notStarted'"
                         :class="[(competitor.place === 1) && !event.eventStatus.live && 'font-bold', event.eventStatus.live && 'text-amber-400']"
                       >
                         <template v-if="competitor.results[0].periodName === 'normaltime_and_overtime'">{{ competitor.results[0].value }}</template>
@@ -204,6 +207,7 @@ const segmentChanged = (ev: CustomEvent) => (activeBlock.value = ev.detail.value
                   <div class="absolute flex flex-col justify-center inset-y-0 right-0 mr-4">
                     <div
                       v-for="competitor in sortCompetitors(event.competitors, !!i)"
+                      :key="competitor.participantId + 'i1'"
                       class="text-gray-400 text-xs"
                       :class="[(competitor.place === 1) && !event.eventStatus.live && 'font-bold', event.eventStatus.live && 'text-amber-400']"
                     >

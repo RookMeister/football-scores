@@ -2,9 +2,9 @@
 import { computed, ref } from 'vue';
 import { IonContent, IonHeader, IonAccordionGroup, IonAccordion, IonItem, IonTitle, IonToolbar, IonPage, IonModal, IonSegment, IonSegmentButton, IonButtons, IonButton, IonIcon, IonLabel, IonDatetime, IonCard, IonRefresher, IonRefresherContent } from '@ionic/vue';
 import { calendarOutline } from 'ionicons/icons';
-import ContentLoader from '@web/components/core/ContentLoader.vue';
-import MatchItem from '@web/components/MatchItem.vue';
-import MatchDetail from '@web/components/MatchDetail.vue';
+import ContentLoader from '@web/components/ContentLoader.vue';
+import MatchItem from '@web/modules/matches/components/MatchItem.vue';
+import MatchDetail from '@web/modules/matches/views/MatchDetail.vue';
 import { formatISO, parseISO } from 'date-fns';
 import { useFetch } from '@vueuse/core';
 import { IMatchesResponce } from '@interfaces/matches.interface';
@@ -22,7 +22,7 @@ const segmentChanged = (ev: CustomEvent) => (activeBlock.value = ev.detail.value
 const data = ref<IMatchesResponce | null>(null);
 const isFetching = ref(false);
 
-const updateData = async (target?: any) => {
+async function updateData (target?: any) {
   !target && (isFetching.value = true);
   const { data: matches } = await useFetch(url, { method: 'GET' }).json<IMatchesResponce>();
   target && target.complete();
@@ -30,7 +30,7 @@ const updateData = async (target?: any) => {
   isFetching.value = false;
 }
 
-function showMatchDetail(urn: string) {
+function showMatchDetail (urn: string) {
   const nav = document.querySelector('ion-nav#matches-page');
   nav && (nav as any).push(MatchDetail, { urn });
 }

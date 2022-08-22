@@ -15,8 +15,6 @@ const tabs = ref(['Голы', 'Видео']);
 const urlMatchDetail = computed(() => `/api/match/${props.urn}/`);
 const { data: match } = useFetch(urlMatchDetail, { method: 'GET' }, { refetch: true }).json<IMatchResponce>();
 const segmentChanged = (ev: CustomEvent) => (activeBlock.value = ev.detail.value);
-match.value && match.value.header.competitors.sort((a: any, b: any) => a.priority - b.priority);
-
 </script>
 
 <template>
@@ -56,7 +54,7 @@ match.value && match.value.header.competitors.sort((a: any, b: any) => a.priorit
         </div>
       </div>
     </div>
-    <template v-if="match && match.header.eventStatus.ended">
+    <template v-if="match && (match.header.eventStatus.ended || match.header.eventStatus.live)">
       <!-- <ion-toolbar style="height: 40px"> -->
         <ion-segment :value="activeBlock" @ionChange="segmentChanged($event)" style="--background: #fff;border-radius: 0;justify-content: left;">
           <ion-segment-button v-for="item in tabs" :key="item" :value="item" mode="md" style="font-size: 11px;min-height: 36px;height: 36px;max-width: 64px;">
@@ -79,7 +77,6 @@ match.value && match.value.header.competitors.sort((a: any, b: any) => a.priorit
           <a v-if="news.title.includes('Видеообзор')" class="block mt-2" target="_blank" :href="'https://sport24.ru/news/football/' + news.urn">{{news.title}}</a>
         </template>
       </div>
-      
     </template>
   </ion-content>
 </template>
