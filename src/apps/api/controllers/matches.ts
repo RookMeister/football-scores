@@ -21,6 +21,7 @@ export const getMatchDetail: RouteHandlerMethod = async (req, reply): Promise<IM
   try {
     const { urn } = (req.params as  { urn: string });
     const match = await request<IMatchResponce>(`${process.env.FETCH_GET_MATCH_URL}/${urn}/review?materialsLimit=0`);
+    match.header.competitors.sort((a: any, b: any) => a.priority - b.priority);
     return match;
   } catch (err) {
     // throw boom.boomify(err as Error);
