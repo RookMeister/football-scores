@@ -6,7 +6,7 @@ import { IStandingParticipant } from '@interfaces/standings.interface';
 export interface IMatchResponce {
   allNews: {  items: IMatchNewsItem[]; };
   awayTeamPreviousEvents: IMatchesResponce;
-  header: any;
+  header: IMatchHeader;
   homeTeamPreviousEvents: IMatchesResponce;
   infoTags: ICompetitionInfoTags[];
   lastMatches: null;
@@ -38,7 +38,7 @@ interface IMatchHeader {
   id: number;
   medalEvent: boolean;
   priority: number;
-  roundDto: {titleRu: string, priority: number, periodUrn: string };
+  roundDto?: { titleRu: string, priority: number, periodUrn: string };
   season: { id: number, urn: string, fromDate: string, toDate: string, year: string, titleRu: string, actual: boolean, frontConfig: {}, competition: {
     priority: number;
     prioritySum: number;
