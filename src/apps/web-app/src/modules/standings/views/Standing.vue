@@ -94,11 +94,11 @@ const segmentChanged = (ev: CustomEvent) => (activeBlock.value = ev.detail.value
         </ion-segment-button>
       </ion-segment>
     </ion-toolbar> -->
-    <div v-if="tournament" class="flex flex-col items-center">
+    <div v-if="tournament" class="flex flex-col items-center mt-4 mb-2">
       <img class="h-24 w-24" :src="IMG_URL + tournament.header.image" alt="" srcset="">
-      <h1><b>{{ (tournament.header).title }}</b></h1>
+      <h1 class="px-6 w-full text-center"><b>{{ (tournament.header).title }}</b></h1>
       <div class="px-6 w-full">
-        <ion-segment v-if="tournament.stages.items.length !== 1" :value="activeBlock" @ionChange="segmentChanged($event)">
+        <ion-segment v-if="tournament.stages.items && tournament.stages.items.length !== 1" :value="activeBlock" @ionChange="segmentChanged($event)">
           <ion-segment-button v-for="item in tournament.stages.items" :key="item.titleRu" :value="item.id.toString()">
             <ion-label>{{ item.titleRu }}</ion-label>
           </ion-segment-button>
@@ -112,24 +112,24 @@ const segmentChanged = (ev: CustomEvent) => (activeBlock.value = ev.detail.value
             <thead>
               <tr>
                 <th class="py-2 border-b border-b-gray-300" scope="col">#</th>
-                <th class="py-2 border-b border-b-gray-300" scope="col">Team</th>
-                <th class="py-2 border-b border-b-gray-300 text-center w-6" scope="col">W</th>
-                <th class="py-2 border-b border-b-gray-300 text-center w-6" scope="col">D</th>
-                <th class="py-2 border-b border-b-gray-300 text-center w-6" scope="col">L</th>
-                <th class="py-2 border-b border-b-gray-300 text-center w-8" scope="col">GD</th>
-                <th class="py-2 border-b border-b-gray-300 text-center w-8" scope="col">PTS</th>
+                <th class="py-2 border-b border-b-gray-300" scope="col">Команда</th>
+                <th class="py-2 border-b border-b-gray-300 text-center w-6" scope="col">В</th>
+                <th class="py-2 border-b border-b-gray-300 text-center w-6" scope="col">Н</th>
+                <th class="py-2 border-b border-b-gray-300 text-center w-6" scope="col">П</th>
+                <!-- <th class="py-2 border-b border-b-gray-300 text-center w-8" scope="col">GD</th> -->
+                <th class="py-2 border-b border-b-gray-300 text-center w-8" scope="col">О</th>
               </tr>
             </thead>
             <tr v-show="(team.stageGroupId === item.id) && (team.standingsType === 'TOTAL')" v-for="team in table.items.sort((a: any, b: any) => a.standingTable.rank - b.standingTable.rank)" :key="team.participantId">
               <td>{{ team.standingTable.rank }}</td>
-              <td class="w-32 flex items-center">
+              <td class="w-48 flex items-center">
                 <img class="h-4 w-4 mr-2" :src="IMG_URL + getSlugImg(team.participantId, table)">
                 <div class="truncate">{{ table.participants[team.participantId].titleRu }}</div>
               </td>
               <td class="text-center">{{ team.standingTable.win }}</td>
               <td class="text-center">{{ team.standingTable.draw }}</td>
               <td class="text-center">{{ team.standingTable.loss }}</td>
-              <td class="text-center">{{ team.standingTable.goalsDiff }}</td>
+              <!-- <td class="text-center">{{ team.standingTable.goalsDiff }}</td> -->
               <td class="text-center">{{ team.standingTable.points }}</td>
             </tr>
           </table>
@@ -152,7 +152,7 @@ const segmentChanged = (ev: CustomEvent) => (activeBlock.value = ev.detail.value
             <table v-if="round.roundTitle === activeRound" :key="`${round.roundTitle}table`" class="w-full text-left border-spacing-y-2 table-auto">
               <thead>
                 <tr>
-                  <th class="pl-6 py-2 border-b border-b-gray-300" scope="col">Team</th>
+                  <th class="pl-6 py-2 border-b border-b-gray-300" scope="col"></th>
                   <th class="py-2 border-b border-b-gray-300 text-center w-14" scope="col"></th>
                   <th class="py-2 border-b border-b-gray-300 text-center w-18" scope="col"></th>
                 </tr>
@@ -183,7 +183,7 @@ const segmentChanged = (ev: CustomEvent) => (activeBlock.value = ev.detail.value
                   <div v-if="(i === 0) && event.eventStatus.live && event.eventClock" class="text-xs mr-2 text-amber-400 flex items-center">
                     {{ getLiveMin(event.eventClock) }}
                   </div>
-                  <div v-if="i === 0">
+                  <div v-if="i === 0" class="flex flex-col h-full justify-around items-center pl-1">
                     <div v-for="competitor in sortCompetitors(event.competitors)" :key="competitor.participantId + 'i0'" :class="(competitor.place === 1) && 'font-bold'">
                       <template v-if="competitor.results[0].periodName === 'normaltime_and_overtime'">{{ competitor.results[0].value }}</template>
                     </div>

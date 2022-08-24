@@ -27,8 +27,8 @@ export interface ICompetitionResponce {
   videos: {  items: []; };
   tabs: ['calendar', 'review', 'statistics', 'teams'];
   stages: {
-    items: ICompetitionStages[];
-    actualId: number;
+    items?: ICompetitionStages[];
+    actualId?: number;
   };
 }
 interface ICompetitionHeader {
