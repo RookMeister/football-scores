@@ -8,6 +8,10 @@
           <ion-icon :icon="football"></ion-icon>
           <ion-label>Матчи</ion-label>
         </ion-tab-button>
+        <ion-tab-button tab="results" href="/results">
+          <ion-icon :icon="football"></ion-icon>
+          <ion-label>Результаты</ion-label>
+        </ion-tab-button>
         <ion-tab-button tab="standings" href="/standings">
           <ion-icon :icon="apps"></ion-icon>
           <ion-label>Лиги</ion-label>

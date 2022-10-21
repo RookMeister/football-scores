@@ -9,6 +9,8 @@ import { formatISO, parseISO } from 'date-fns';
 import { useFetch } from '@vueuse/core';
 import { IMatchesResponce } from '@interfaces/matches.interface';
 
+const props = defineProps({ isResult: Boolean })
+
 const IMG_URL = import.meta.env.VITE_IMG_URL;
 const currentDate = new Date();
 currentDate.setHours(currentDate.getHours() + currentDate.getTimezoneOffset() / 60);
@@ -90,7 +92,7 @@ const changeDate = (date: CustomEvent | null) => {
       <div v-if="data && !isFetching" class="flex flex-col text-base">
         <template v-if="isLiveMatches">
           <ion-accordion-group :multiple="true">
-          <ion-accordion v-if="isEndedMatches && !isLive && isEndedMatchesWithReview" value="review">
+            <ion-accordion v-if="isEndedMatches && !isLive && isEndedMatchesWithReview" value="review">
               <ion-item slot="header">
                 <div class="py-2 font-bold flex items-center">
                   Матчи с обзорами
@@ -123,7 +125,7 @@ const changeDate = (date: CustomEvent | null) => {
               </ion-item>
               <div slot="content" class="px-4 mt-2">
                 <template v-for="match in data.items">
-                  <MatchItem :key="match.id" v-if="(match.seasonId === season.id) && (match.eventStatus.live === isLive)" :match="match" :participants="data.participants" @click.enter="showMatchDetail(match.urn)" />
+                  <MatchItem :key="match.id" v-if="(match.seasonId === season.id) && (match.eventStatus.live === isLive) && (match.eventStatus.ended === props.isResult)" :match="match" :participants="data.participants" @click.enter="showMatchDetail(match.urn)" />
                 </template>
               </div>
             </ion-accordion>

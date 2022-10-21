@@ -3,7 +3,7 @@ import { ICompetitionStagesGroups } from '@interfaces/competitions.interface';
 
 export interface IMatchesResponce {
   items: IEvent[];
-  seasons: { [key: number]: IMatchesSeason };
+  seasons: IMatchesSeason[];
   participants: { [key: number]: IStandingParticipant; };
   stages: { [key: number]:ICompetitionStagesGroups; };
   stageGroups: { [key: number]:ICompetitionStagesGroups; };

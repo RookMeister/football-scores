@@ -16,6 +16,13 @@ const routes: Array<RouteRecordRaw> = [
     path: '/matches',
     name: 'Матчи',
     component: () => import('@web/views/MatchesPage.vue'),
+    props: { isResult: false }
+  },
+  {
+    path: '/results',
+    name: 'Результаты',
+    component: () => import('@web/views/MatchesPage.vue'),
+    props: { isResult: true }
   },
   {
     path: '/standings',

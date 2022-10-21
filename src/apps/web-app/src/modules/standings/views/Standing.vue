@@ -95,7 +95,7 @@ const segmentChanged = (ev: CustomEvent) => (activeBlock.value = ev.detail.value
       </ion-segment>
     </ion-toolbar> -->
     <div v-if="tournament" class="flex flex-col items-center mt-4 mb-2">
-      <img class="h-24 w-24" :src="IMG_URL + tournament.header.image" alt="" srcset="">
+      <img class="h-24 w-24" :src="IMG_URL + tournament.header.frontConfig?.logos.default" alt="" srcset="">
       <h1 class="px-6 w-full text-center"><b>{{ (tournament.header).title }}</b></h1>
       <div class="px-6 w-full">
         <ion-segment v-if="tournament.stages.items && tournament.stages.items.length !== 1" :value="activeBlock" @ionChange="segmentChanged($event)">

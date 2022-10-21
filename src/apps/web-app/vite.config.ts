@@ -6,10 +6,10 @@ export default defineConfig({
   base: '/',
   server: {
     host: true,
-    port: Number(process.env.WEB_PORT),
+    port: Number(process.env.WEB_PORT) || 3000,
     proxy: {
       '^/api': {
-        target: process.env.API_URL,
+        target: process.env.API_URL || 'https://footballscores.ru',
         changeOrigin: true
       },
     },

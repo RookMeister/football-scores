@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { IonPage,  IonNav } from '@ionic/vue';
 import MatchesList from '@web/modules/matches/views/MatchesList.vue';
-
+const props = defineProps({ isResult: Boolean })
 </script>
 
 <template>
